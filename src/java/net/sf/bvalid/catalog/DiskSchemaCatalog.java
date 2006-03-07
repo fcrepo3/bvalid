@@ -7,6 +7,11 @@ import org.apache.log4j.Logger;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * TODO: Automatically prune _storageDir at startup and shutdown
+ *       Add something to list entries?? To the interface.
+ *       Create DB-backed equivalent
+ */
 public class DiskSchemaCatalog implements SchemaCatalog {
 
     private static Logger _LOG = Logger.getLogger(DiskSchemaCatalog.class.getName());
