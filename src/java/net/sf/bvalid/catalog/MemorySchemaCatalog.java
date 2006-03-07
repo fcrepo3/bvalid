@@ -13,11 +13,21 @@ public class MemorySchemaCatalog implements SchemaCatalog {
         _map = new HashMap();
     }
 
-    public boolean contains(String uri) {
+    public synchronized Iterator list() {
+        // Make a copy so the underlying list is threadsafe
+        List list = new ArrayList();
+        Iterator iter = _map.keySet().iterator();
+        while (iter.hasNext()) {
+            list.add((String) iter.next());
+        }
+        return list.iterator();
+    }
+
+    public synchronized boolean contains(String uri) {
         return _map.containsKey(uri);
     }
 
-    public InputStream get(String uri) {
+    public synchronized InputStream get(String uri) {
 
         byte[] bytes = (byte[]) _map.get(uri);
         if (bytes == null) {
@@ -27,7 +37,7 @@ public class MemorySchemaCatalog implements SchemaCatalog {
         }
     }
 
-    public void put(String uri, InputStream in) throws ValidatorException {
+    public synchronized void put(String uri, InputStream in) throws ValidatorException {
         try {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -47,7 +57,7 @@ public class MemorySchemaCatalog implements SchemaCatalog {
         }
     }    
 
-    public void remove(String uri) {
+    public synchronized void remove(String uri) {
         _map.remove(uri);
     }
 

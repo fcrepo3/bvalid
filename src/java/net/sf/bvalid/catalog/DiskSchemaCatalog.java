@@ -7,11 +7,6 @@ import org.apache.log4j.Logger;
 
 import net.sf.bvalid.ValidatorException;
 
-/**
- * TODO: Automatically prune _storageDir at startup and shutdown
- *       Add something to list entries?? To the interface.
- *       Create DB-backed equivalent
- */
 public class DiskSchemaCatalog implements SchemaCatalog {
 
     private static Logger _LOG = Logger.getLogger(DiskSchemaCatalog.class.getName());
@@ -39,12 +34,46 @@ public class DiskSchemaCatalog implements SchemaCatalog {
             throw new ValidatorException("Not a directory: " + _storageDir);
         }
 
-        loadIndex(); 
+        loadIndex();
+        pruneDir(_storageDir, _indexMap.keySet());
+    }
+
+    private static void pruneDir(File dir, Set keepNames) {
+
+        try {
+            File[] files = dir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                String name = file.getName();
+                if (file.isFile() && !keepNames.contains(name)) {
+                    boolean deleted = file.delete();
+                    String msgSuffix = " unused file from storage directory: "
+                            + name;
+                    if (deleted) {
+                        _LOG.info("Pruned" + msgSuffix);
+                    } else {
+                        _LOG.warn("Unable to prune" + msgSuffix);
+                    }
+                }
+            }
+        } catch (Throwable th) {
+            _LOG.warn("Unable to prune schema storage directory", th);
+        }
     }
 
 
     public synchronized boolean contains(String uri) {
         return _indexMap.containsKey(uri);
+    }
+
+    public synchronized Iterator list() {
+        // Make a copy so the underlying list is threadsafe
+        List list = new ArrayList();
+        Iterator iter = _indexMap.keySet().iterator();
+        while (iter.hasNext()) {
+            list.add((String) iter.next());
+        }
+        return list.iterator();
     }
 
     public synchronized InputStream get(String uri) throws ValidatorException {
