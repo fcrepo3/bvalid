@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bvalid" default="dist" basedir=".">
+
+  <loadproperties srcFile="build.properties"/>
+
+  <path id="base.path">
+    <pathelement location="${lib.xml-apis}"/>
+    <pathelement location="${lib.xerces}"/>
+    <pathelement location="${lib.log4j}"/>
+    <pathelement location="${lib.httpclient}"/>
+    <pathelement location="${lib.logging}"/>
+  </path>
+  <path id="compile.path">
+    <path refid="base.path"/>
+    <pathelement location="${lib.junit}"/>
+  </path>
+  <path id="test.path">
+    <path refid="compile.path"/>
+    <pathelement location="build/classes"/>
+  </path>
+
+  <target name="classes" 
+          depends="prep"
+          description="build all java classes into build/">
+    <mkdir dir="build/classes"/>
+    <javac srcdir="src/java" destdir="build/classes" 
+           includes="**" 
+           classpathref="compile.path"
+           optimize="${optimize}" debug="${debug}"/>
+    <copy todir="build/classes">
+      <fileset dir="src/config"/>
+    </copy>
+  </target>
+
+  <target name="dist" depends="classes" description="Build the distribution in dist/">
+    <mkdir dir="dist/lib"/>
+    <copy todir="dist/lib">
+      <fileset dir="lib"/>
+    </copy>
+    <jar jarfile="dist/bvalid.jar" basedir="build/classes"/>
+  </target>
+
+  <target name="doc"
+          depends="prep"
+          description="Build the documentation in dist/doc">
+    <javadoc packagenames="net.sf.bvalid.*"
+             classpathref="compile.path"
+             sourcepath="src/java"
+             defaultexcludes="yes"
+             destdir="dist/doc/api"
+             windowtitle="BValid Javadocs">
+      <doctitle><![CDATA[<h1>BValid Javadocs</h1>]]></doctitle>
+    </javadoc>
+  </target>
+
+  <target name="prep"
+          description="prepare for a build">
+    <mkdir dir="build"/>
+    <mkdir dir="dist"/>
+  </target>
+
+  <target name="clean"
+          description="remove all build-generated stuff">
+      <delete dir="build"/>
+      <delete dir="dist"/>
+  </target>
+</project>
