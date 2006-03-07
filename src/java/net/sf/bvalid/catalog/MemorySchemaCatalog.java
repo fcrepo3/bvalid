@@ -13,7 +13,7 @@ public class MemorySchemaCatalog implements SchemaCatalog {
         _map = new HashMap();
     }
 
-    public synchronized Iterator list() {
+    public synchronized Iterator listURIs() {
         // Make a copy so the underlying list is threadsafe
         List list = new ArrayList();
         Iterator iter = _map.keySet().iterator();

@@ -66,7 +66,7 @@ public class DiskSchemaCatalog implements SchemaCatalog {
         return _indexMap.containsKey(uri);
     }
 
-    public synchronized Iterator list() {
+    public synchronized Iterator listURIs() {
         // Make a copy so the underlying list is threadsafe
         List list = new ArrayList();
         Iterator iter = _indexMap.keySet().iterator();
