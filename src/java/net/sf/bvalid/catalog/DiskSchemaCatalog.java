@@ -9,95 +9,83 @@ import net.sf.bvalid.ValidatorException;
 
 public class DiskSchemaCatalog implements SchemaCatalog {
 
-    private static Logger _LOG = Logger.getLogger(DiskSchemaCatalog.class.getName());
+    private static Logger _LOG = 
+            Logger.getLogger(DiskSchemaCatalog.class.getName());
 
-    private static final String _INDEX_FILENAME = "index.txt";
-
-    /** Where schemas and the index file are stored */
+    private SchemaIndex _index;
     private File _storageDir;
+    private Collection _neverPruneFilenames;
 
-    /** Memory storage of uri-to-file mapping */
-    private Map _indexMap;
+    public DiskSchemaCatalog(SchemaIndex index,
+                             File storageDir)
+            throws ValidatorException {
 
-    public DiskSchemaCatalog(File storageDir) throws ValidatorException {
+        this(index, storageDir, null);
+    }
 
+    public DiskSchemaCatalog(SchemaIndex index,
+                             File storageDir,
+                             Collection neverPruneFilenames)
+            throws ValidatorException {
+
+        _index = index;
         _storageDir = storageDir;
+        _neverPruneFilenames = neverPruneFilenames;
 
-        if (!_storageDir.exists()) {
-            _LOG.info("Schema storage directory does not yet exist; creating...");
-            _storageDir.mkdirs();
-            if (!_storageDir.exists()) {
-                throw new ValidatorException("Unable to create directory: " 
-                        + _storageDir);
-            }
-        } else if (!_storageDir.isDirectory()) {
-            throw new ValidatorException("Not a directory: " + _storageDir);
+        pruneStorageDir();
+    }
+
+    private void pruneStorageDir() 
+            throws ValidatorException {
+
+        Set keepNames;
+
+        if (_neverPruneFilenames == null) {
+            keepNames = new HashSet();
+        } else {
+            keepNames = new HashSet(_neverPruneFilenames);
         }
 
-        loadIndex();
-        pruneDir(_storageDir, _indexMap.keySet());
-    }
-
-    private static void pruneDir(File dir, Set keepNames) {
-
-        try {
-            File[] files = dir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file = files[i];
-                String name = file.getName();
-                if (file.isFile() && !keepNames.contains(name)) {
-                    boolean deleted = file.delete();
-                    String msgSuffix = " unused file from storage directory: "
-                            + name;
-                    if (deleted) {
-                        _LOG.info("Pruned" + msgSuffix);
-                    } else {
-                        _LOG.warn("Unable to prune" + msgSuffix);
-                    }
-                }
-            }
-        } catch (Throwable th) {
-            _LOG.warn("Unable to prune schema storage directory", th);
-        }
-    }
-
-
-    public synchronized boolean contains(String uri) {
-        return _indexMap.containsKey(uri);
-    }
-
-    public synchronized Iterator listURIs() {
-        // Make a copy so the underlying list is threadsafe
-        List list = new ArrayList();
-        Iterator iter = _indexMap.keySet().iterator();
+        Iterator iter = _index.getURISet().iterator();
         while (iter.hasNext()) {
-            list.add((String) iter.next());
+            String uri = (String) iter.next();
+            keepNames.add(_index.getFilename(uri));
         }
-        return list.iterator();
+
+        int pruneCount = pruneDir(_storageDir, keepNames);
+        _LOG.info("Pruned " + pruneCount + " unused file(s) from "
+                + "schema storage directory");
     }
 
-    public synchronized InputStream get(String uri) throws ValidatorException {
-        if (_indexMap.containsKey(uri)) {
-            try {
-                _LOG.debug("Schema " + uri + " found in catalog; reading...");
-                return new FileInputStream((File) _indexMap.get(uri));
-            } catch (Throwable th) {
-                throw new ValidatorException("Error reading file in catalog", th);
-            }
-        } else {
+    public synchronized boolean contains(String uri) 
+            throws ValidatorException {
+
+        return (_index.getFilename(uri) != null);
+    }
+
+    public synchronized Iterator listURIs() 
+            throws ValidatorException {
+
+        return _index.getURISet().iterator();
+    }
+
+    public synchronized InputStream get(String uri) 
+            throws ValidatorException {
+
+        String filename = _index.getFilename(uri);
+
+        if (filename == null) {
             return null;
+        } else {
+            try {
+                return new FileInputStream(new File(_storageDir, filename));
+            } catch (IOException e) {
+                throw new ValidatorException("Error reading schema from disk", e);
+            }
         }
     }
 
-    public synchronized void put(String uri, 
-                                 InputStream in) throws ValidatorException {
-
-        // Get rid of previous if needed 
-        if (removeMappingAndFile(uri)) {
-            _LOG.info("Replacing schema in catalog: " + uri);
-        } else {
-            _LOG.info("Adding new schema to catalog: " + uri);
-        }
+    public synchronized void put(String uri, InputStream in) throws ValidatorException {
 
         // Make sure the new file is unique
         long num = System.currentTimeMillis();
@@ -116,7 +104,7 @@ public class DiskSchemaCatalog implements SchemaCatalog {
             while ( ( len = in.read( buf ) ) > 0 ) {
                 out.write( buf, 0, len );
             }
-            _LOG.debug("Wrote content for schema (" + uri + ") to file: " 
+            _LOG.debug("Wrote content for schema (" + uri + ") to file: "
                     + file.getPath());
         } catch (Throwable th) {
             throw new ValidatorException("Unable to write schema content to "
@@ -126,117 +114,65 @@ public class DiskSchemaCatalog implements SchemaCatalog {
             if (out != null) try { out.close(); } catch (Exception e) { }
         }
 
-        // Finally, add it to the memory index and save the index to disk
-        _indexMap.put(uri, file);
-        saveIndex();
+        // Add/replace the mapping in the index
+        String oldFilename = _index.putFilename(uri, file.getName());
+
+        // Get rid of previous file if needed
+        if (oldFilename != null) {
+            removeSchemaFile(oldFilename);
+        }
     }
 
     public synchronized void remove(String uri) throws ValidatorException {
-        if (removeMappingAndFile(uri)) {
-            _LOG.debug("Removed schema mapping and file from catalog: " + uri);
-            saveIndex();
+
+        String filename = _index.getFilename(uri);
+        
+        if (filename == null) {
+            _LOG.warn("Cannot remove schema; not in index: " + uri);
         } else {
-            _LOG.warn("Non-existing schema not removed: " + uri);
+            removeSchemaFile(filename);
+            _index.removeMapping(uri);
         }
     }
 
-    /**
-     * If it exists in the memory map, remove it from the memory map,
-     * attempt to delete the underlying file, then return true.
-     * Otherwise, return false.
-     */
-    private synchronized boolean removeMappingAndFile(String uri) {
+    private void removeSchemaFile(String filename) {
 
-        if (_indexMap.containsKey(uri)) {
-            File oldFile = (File) _indexMap.remove(uri);
-            boolean deleted = oldFile.delete();
-            if (!deleted) {
-                _LOG.warn("Unable to delete the file (" + oldFile.getPath()
-                        + ") that contains the schema (" + uri + ")... will "
-                        + "mark it for deletion later");
-                oldFile.deleteOnExit();
+        File file = new File(filename);
+
+        boolean deleted = file.delete();
+        if (!deleted) {
+            if (file.exists()) {
+                _LOG.warn("Cannot remove schema file: " + file.getPath());
+            } else {
+                _LOG.warn("Schema file already deleted: " + file.getPath());
             }
-            return true;
-        } else {
-            return false;
         }
     }
 
-    private synchronized void loadIndex() throws ValidatorException {
-        try {
-            _indexMap = loadIndex(_storageDir);
-            _LOG.debug("Index loaded with " + _indexMap.size() + " entries");
-        } catch (Throwable th) {
-            throw new ValidatorException("Unable to load schema index", th);
-        }
-    }
+    private static int pruneDir(File dir, Set keepNames) {
 
-    private synchronized void saveIndex() throws ValidatorException {
+        int count = 0;
         try {
-             saveIndex(_storageDir, _indexMap);
-            _LOG.debug("Index saved with " + _indexMap.size() + " entries");
-        } catch (Throwable th) {
-            throw new ValidatorException("Unable to save schema index", th);
-        }
-    }
-
-    protected static Map loadIndex(File storageDir) throws IOException {
-
-        File indexFile = new File(storageDir, _INDEX_FILENAME);
-        InputStream in = new FileInputStream(indexFile);
-        try {
-            Map map = new HashMap();
-            BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(in, "UTF-8"));
-            String line = reader.readLine();
-            int lineNum = 0;
-            while (line != null) {
-                lineNum++;
-                line = line.trim();
-                if (line.length() > 0) {
-                    String[] parts = line.split(" ");
-                    if (parts.length == 2) {
-                        String uri = parts[0];
-                        File file = new File(storageDir, parts[1]);
-                        if (!file.exists()) {
-                            _LOG.warn("Skipping line #" + lineNum + " in schema "
-                                    + "index (the file does not exist)");
-                        } else {
-                            map.put(parts[0], parts[1]);
-                        }
+            File[] files = dir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                String name = file.getName();
+                if (file.isFile() && !keepNames.contains(name)) {
+                    boolean deleted = file.delete();
+                    String msgSuffix = " unused file from storage directory: "
+                            + name;
+                    if (deleted) {
+                        _LOG.info("Pruned" + msgSuffix);
+                        count++;
                     } else {
-                        _LOG.warn("Skipping line #" + lineNum + " in schema "
-                                + "index (it did not contain a space delimiter "
-                                + "as expected)");
+                        _LOG.warn("Unable to prune" + msgSuffix);
                     }
                 }
-                line = reader.readLine();
             }
-            reader.close();
-            return map;
-        } finally {
-            try { in.close(); } catch (Exception e) { }
+        } catch (Throwable th) {
+            _LOG.warn("Error pruning schema storage directory", th);
         }
-    }
-
-    protected static void saveIndex(File storageDir, 
-                                    Map map) throws IOException {
-
-        File indexFile = new File(storageDir, _INDEX_FILENAME);
-        OutputStream out = new FileOutputStream(indexFile);
-        try {
-            PrintWriter writer = new PrintWriter(
-                                     new OutputStreamWriter(out, "UTF-8"));
-            Iterator iter = map.keySet().iterator();
-            while (iter.hasNext()) {
-                String uri = (String) iter.next();
-                File file = (File) map.get(uri);
-                writer.println(uri + " " + file.getName());
-            }
-            writer.close();
-        } finally {
-            try { out.close(); } catch (Exception e) { }
-        }
+        return count;
     }
 
 }

@@ -14,13 +14,7 @@ public class MemorySchemaCatalog implements SchemaCatalog {
     }
 
     public synchronized Iterator listURIs() {
-        // Make a copy so the underlying list is threadsafe
-        List list = new ArrayList();
-        Iterator iter = _map.keySet().iterator();
-        while (iter.hasNext()) {
-            list.add((String) iter.next());
-        }
-        return list.iterator();
+        return new HashSet(_map.keySet()).iterator(); // threadsafe copy
     }
 
     public synchronized boolean contains(String uri) {
