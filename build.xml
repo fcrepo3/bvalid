@@ -17,11 +17,12 @@
   <path id="test.path">
     <path refid="compile.path"/>
     <pathelement location="build/classes"/>
+    <pathelement location="build/testclasses"/>
   </path>
 
   <target name="classes" 
           depends="prep"
-          description="build all java classes into build/">
+          description="build all java classes into build/classes">
     <mkdir dir="build/classes"/>
     <javac srcdir="src/java" destdir="build/classes" 
            includes="**" 
@@ -30,6 +31,16 @@
     <copy todir="build/classes">
       <fileset dir="src/config"/>
     </copy>
+  </target>
+
+  <target name="testclasses"
+          depends="classes"
+          description="build all test classes into build/testclasses">
+    <mkdir dir="build/testclasses"/>
+    <javac srcdir="src/testjava" destdir="build/testclasses"
+           includes="**"
+           classpathref="test.path"
+           optimize="${optimize}" debug="${debug}"/>
   </target>
 
   <target name="dist" depends="classes" description="Build the distribution in dist/">
@@ -51,6 +62,18 @@
              windowtitle="BValid Javadocs">
       <doctitle><![CDATA[<h1>BValid Javadocs</h1>]]></doctitle>
     </javadoc>
+  </target>
+
+  <target name="test" description="Run tests" depends="testclasses">
+      <!-- 
+          For this task to run, prior to running ant, set CLASSPATH=lib\junit.jar
+      -->
+    <junit printsummary="yes" haltonfailure="yes" showoutput="true">
+      <formatter type="plain" usefile="false"/>
+      <classpath refid="test.path"/>
+      <sysproperty key="propname" value="propvalue"/>
+      <test name="net.sf.bvalid.SchemaLanguageTest"/>
+    </junit>
   </target>
 
   <target name="prep"
