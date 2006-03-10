@@ -73,6 +73,7 @@
       <classpath refid="test.path"/>
       <sysproperty key="propname" value="propvalue"/>
       <test name="net.sf.bvalid.SchemaLanguageTest"/>
+      <test name="net.sf.bvalid.XMLValidatorFactoryTest"/>
     </junit>
   </target>
 

@@ -8,7 +8,7 @@ public abstract class XMLValidatorFactory {
 
     public static XMLValidator getValidator(SchemaLanguage lang)
             throws ValidatorException {
-        return getValidator(lang, new WebSchemaLocator(), true);
+        return getValidator(lang, new WebSchemaLocator());
     }
 
     public static XMLValidator getValidator(SchemaLanguage lang,
