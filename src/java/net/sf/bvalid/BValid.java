@@ -10,7 +10,7 @@ public class BValid {
         System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.commons.logging.impl.Log4jFactory");
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Log4JLogger");
 
-        XMLValidator validator = XMLValidatorFactory.getValidator(
+        Validator validator = ValidatorFactory.getValidator(
                                      SchemaLanguage.XSD);
 
         validator.validate(new FileInputStream(new File(args[0])));

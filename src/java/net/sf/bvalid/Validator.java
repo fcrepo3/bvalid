@@ -5,7 +5,7 @@ import java.util.*;
 
 import net.sf.bvalid.locator.SchemaLocator;
 
-public interface XMLValidator {
+public interface Validator {
 
     /**
      * Set the <code>SchemaLocator</code> for this validator.

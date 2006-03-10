@@ -5,9 +5,9 @@ import junit.textui.TestRunner;
 
 import net.sf.bvalid.locator.WebSchemaLocator;
 
-public class XMLValidatorFactoryTest extends TestCase {
+public class ValidatorFactoryTest extends TestCase {
 
-    public XMLValidatorFactoryTest(String name) { super (name); }
+    public ValidatorFactoryTest(String name) { super (name); }
 
     public void setUp() {
     }
@@ -19,24 +19,24 @@ public class XMLValidatorFactoryTest extends TestCase {
 
     public void testGetValidatorDefaultLocator() 
             throws ValidatorException {
-        XMLValidatorFactory.getValidator(SchemaLanguage.XSD);
+        ValidatorFactory.getValidator(SchemaLanguage.XSD);
     }
 
     public void testGetValidatorSpecificLocator() 
             throws ValidatorException {
-        XMLValidatorFactory.getValidator(SchemaLanguage.XSD,
+        ValidatorFactory.getValidator(SchemaLanguage.XSD,
                                          new WebSchemaLocator());
     }
 
     public void testGetValidatorNoFailOnMissingSchema() 
             throws ValidatorException {
-        XMLValidatorFactory.getValidator(SchemaLanguage.XSD,
+        ValidatorFactory.getValidator(SchemaLanguage.XSD,
                                          new WebSchemaLocator(),
                                          false);
     }
 
     public static void main(String[] args) {
-        TestRunner.run(XMLValidatorFactoryTest.class);
+        TestRunner.run(ValidatorFactoryTest.class);
     }   
 
 }

@@ -16,10 +16,10 @@ import org.xml.sax.XMLReader;
 import net.sf.bvalid.SchemaLanguage;
 import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.ValidationException;
-import net.sf.bvalid.XMLValidator;
+import net.sf.bvalid.Validator;
 import net.sf.bvalid.locator.SchemaLocator;
 
-public class XercesXSDValidator implements EntityResolver, XMLValidator {
+public class XercesXSDValidator implements EntityResolver, Validator {
 
     private static Logger _LOG = Logger.getLogger(XercesXSDValidator.class.getName());
 

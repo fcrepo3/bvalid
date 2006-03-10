@@ -4,25 +4,25 @@ import net.sf.bvalid.locator.SchemaLocator;
 import net.sf.bvalid.locator.WebSchemaLocator;
 import net.sf.bvalid.xsd.xerces.XercesXSDValidator;
 
-public abstract class XMLValidatorFactory {
+public abstract class ValidatorFactory {
 
-    public static XMLValidator getValidator(SchemaLanguage lang)
+    public static Validator getValidator(SchemaLanguage lang)
             throws ValidatorException {
         return getValidator(lang, new WebSchemaLocator());
     }
 
-    public static XMLValidator getValidator(SchemaLanguage lang,
+    public static Validator getValidator(SchemaLanguage lang,
                                             SchemaLocator locator)
             throws ValidatorException {
         return getValidator(lang, locator, true);
     }
 
-    public static XMLValidator getValidator(SchemaLanguage lang,
+    public static Validator getValidator(SchemaLanguage lang,
                                             SchemaLocator locator,
                                             boolean failOnMissingReferencedSchema) 
             throws ValidatorException {
 
-        XMLValidator validator = null;
+        Validator validator = null;
         if (lang == SchemaLanguage.XSD) {
             validator = new XercesXSDValidator();
         } 
