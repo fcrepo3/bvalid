@@ -21,7 +21,7 @@
   
   <root>
     <priority value="WARN" />
-    <appender-ref ref="LogFile"/>
+    <appender-ref ref="STDOUT"/>
   </root>
   
 </log4j:configuration>

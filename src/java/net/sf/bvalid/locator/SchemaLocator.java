@@ -8,6 +8,7 @@ public interface SchemaLocator {
 
     /**
      * Get the content of the indicated schema.
+     *
      * If the schema is not found and required is false, return null.
      * If the schema is not found and required is true, throw an exception.
      */

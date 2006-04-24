@@ -33,7 +33,7 @@ public class WebSchemaLocator implements SchemaLocator {
                 in.close();
                 return null;
             } else {
-                _LOG.info("Got schema from web: " + uri);
+                _LOG.info("Loaded from web: " + uri);
                 return in;
             }
         } catch (Throwable th) {

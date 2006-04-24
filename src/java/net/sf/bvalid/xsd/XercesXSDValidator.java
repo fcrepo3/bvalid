@@ -8,9 +8,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
 
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import net.sf.bvalid.SchemaLanguage;
@@ -19,7 +19,7 @@ import net.sf.bvalid.ValidationException;
 import net.sf.bvalid.Validator;
 import net.sf.bvalid.locator.SchemaLocator;
 
-public class XercesXSDValidator implements EntityResolver, Validator {
+public class XercesXSDValidator implements Validator {
 
     private static Logger _LOG = Logger.getLogger(XercesXSDValidator.class.getName());
 
@@ -59,6 +59,8 @@ public class XercesXSDValidator implements EntityResolver, Validator {
 
     private void doValidation(InputStream xmlStream,
                               String schemaURI) throws ValidationException {
+
+        XSDErrorHandler errorHandler = new XSDErrorHandler();
         try {
 
             SAXParser parser = _parserFactory.newSAXParser();
@@ -68,52 +70,40 @@ public class XercesXSDValidator implements EntityResolver, Validator {
             if (schemaURI != null) {
                 parser.setProperty(
                     "http://java.sun.com/xml/jaxp/properties/schemaSource",
-                    schemaURI.toString());
+                    schemaURI);
             }
 
             XMLReader reader = parser.getXMLReader();
-//            xmlreader.setErrorHandler(new DOValidatorXMLErrorHandler());
-            reader.setEntityResolver(this);
+
+            reader.setErrorHandler(errorHandler);
+
+            reader.setEntityResolver(
+                    new LocatorEntityResolver( 
+                            _locator, 
+                            _failOnMissingReferencedSchema, 
+                            schemaURI));
 
             reader.parse(new InputSource(xmlStream));
 
+
+        } catch (SAXParseException e) {
+            throw new ValidationException(XSDErrorHandler.getErrorText(e));
         } catch (Throwable th) {
-            throw new ValidationException("Validation failed", th);
+            throw new ValidationException("Validation failed due to underlying error", th);
         } finally {
             try { xmlStream.close(); } catch (Exception e) { }
         }
-    }
 
-    public InputSource resolveEntity(String publicId, 
-                                     String systemId) throws SAXException {
-
-        System.out.println("Resolving entity: pubId: " + publicId + " sysId: " + systemId);
-        _LOG.debug("Resolving...");
-        
-        InputSource source = null;
-        if (systemId != null) {
-            try {
-                InputStream in = _locator.get(systemId, _failOnMissingReferencedSchema);
-                if (in != null) {
-                    source = new InputSource(in);
-                }
-            } catch (Exception ex) {
-                throw new SAXException("Unable to load schema");
+        List errors = errorHandler.getErrorList();
+        if (errors != null && errors.size() > 0) {
+            StringBuffer msg = new StringBuffer();
+            for (int i = 0; i < errors.size(); i++) {
+                if (i > 0) msg.append("\n");
+                msg.append((String) errors.get(i));
             }
+            throw new ValidationException(msg.toString());
         }
 
-        if (source == null) {
-            return new InputSource();
-        } else {
-            return source;
-        }
-/*
-        if (systemId != null && systemId.startsWith("file:")) {
-            return null;
-        } else {
-            return new InputSource();
-        }
-*/
     }
 
 }

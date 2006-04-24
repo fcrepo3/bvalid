@@ -13,8 +13,18 @@ public class BValid {
         Validator validator = ValidatorFactory.getValidator(
                                      SchemaLanguage.XSD);
 
-        validator.validate(new FileInputStream(new File(args[0])));
-        System.out.println("OK");
+        try {
+            validator.validate(new FileInputStream(new File(args[0])));
+            System.out.println("OK");
+            System.exit(0);
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+            if (e.getCause() != null) {
+                System.out.println("Underlying error:");
+                e.getCause().printStackTrace();
+            }
+            System.exit(1);
+        }
     }
 
 }
