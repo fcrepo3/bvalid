@@ -1,4 +1,4 @@
-package net.sf.bvalid.xsd.xerces;
+package net.sf.bvalid.xsd;
 
 import java.io.*;
 import java.util.*;
