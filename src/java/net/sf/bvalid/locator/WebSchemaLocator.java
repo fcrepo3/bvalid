@@ -42,4 +42,6 @@ public class WebSchemaLocator implements SchemaLocator {
         }
     }
 
+    public void successfullyUsed(String uri) { }
+
 }

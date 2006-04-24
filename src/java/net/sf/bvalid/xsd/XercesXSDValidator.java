@@ -60,6 +60,10 @@ public class XercesXSDValidator implements Validator {
     private void doValidation(InputStream xmlStream,
                               String schemaURI) throws ValidationException {
 
+        LocatorEntityResolver entityResolver = 
+                new LocatorEntityResolver(_locator,
+                                          _failOnMissingReferencedSchema,
+                                          schemaURI);
         XSDErrorHandler errorHandler = new XSDErrorHandler();
         try {
 
@@ -74,17 +78,10 @@ public class XercesXSDValidator implements Validator {
             }
 
             XMLReader reader = parser.getXMLReader();
-
             reader.setErrorHandler(errorHandler);
-
-            reader.setEntityResolver(
-                    new LocatorEntityResolver( 
-                            _locator, 
-                            _failOnMissingReferencedSchema, 
-                            schemaURI));
+            reader.setEntityResolver(entityResolver);
 
             reader.parse(new InputSource(xmlStream));
-
 
         } catch (SAXParseException e) {
             throw new ValidationException(XSDErrorHandler.getErrorText(e));
@@ -96,12 +93,40 @@ public class XercesXSDValidator implements Validator {
 
         List errors = errorHandler.getErrorList();
         if (errors != null && errors.size() > 0) {
+            // if validation failed, throw appropriate exception
             StringBuffer msg = new StringBuffer();
             for (int i = 0; i < errors.size(); i++) {
                 if (i > 0) msg.append("\n");
                 msg.append((String) errors.get(i));
             }
             throw new ValidationException(msg.toString());
+        } else {
+            // if successful, notify the locator of the schemas used
+            int count = 0;
+            StringBuffer resolvedList = null;
+            if (_LOG.isDebugEnabled()) {
+                resolvedList = new StringBuffer();
+            }
+            Iterator iter = entityResolver.getResolvedURIs().iterator();
+            while (iter.hasNext()) {
+                String uri = (String) iter.next();
+                try {
+                    _locator.successfullyUsed(uri);
+                } catch (ValidatorException e) {
+                    throw new ValidationException("Validation failed due to validator error", e);
+                }
+                if (resolvedList != null) {
+                    resolvedList.append("\n" + uri);
+                }
+                count++;
+            }
+            if (_LOG.isInfoEnabled()) {
+                _LOG.info("Instance validated using " + count + " schema file(s)");
+            }
+            if (_LOG.isDebugEnabled() && count > 0) {
+                _LOG.debug("Used the following schema file(s) for validation: "
+                        + resolvedList);
+            }
         }
 
     }

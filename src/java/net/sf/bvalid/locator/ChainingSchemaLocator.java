@@ -28,4 +28,13 @@ public class ChainingSchemaLocator implements SchemaLocator {
         return ((SchemaLocator) _locators.get(i)).get(uri, required);
     }
 
+    public void successfullyUsed(String uri) throws ValidatorException {
+
+        // carry the message down the chain
+        int i = 0;
+        while (i < (_locators.size() - 1)) {
+            ((SchemaLocator) _locators.get(i)).successfullyUsed(uri);
+        }
+    }
+
 }

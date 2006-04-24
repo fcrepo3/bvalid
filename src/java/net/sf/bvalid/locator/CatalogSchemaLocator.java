@@ -27,4 +27,6 @@ public class CatalogSchemaLocator implements SchemaLocator {
         }
     }
 
+    public void successfullyUsed(String uri) { }
+
 }

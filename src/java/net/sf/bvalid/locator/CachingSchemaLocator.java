@@ -37,4 +37,8 @@ public class CachingSchemaLocator implements SchemaLocator {
 
     }
 
+    public void successfullyUsed(String uri) throws ValidatorException {
+        throw new ValidatorException("successfullyUsed is not yet implemented!");
+    }
+
 }

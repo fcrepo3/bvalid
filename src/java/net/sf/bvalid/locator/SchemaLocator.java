@@ -14,4 +14,14 @@ public interface SchemaLocator {
      */
     public InputStream get(String uri, boolean required) throws ValidatorException;
 
+    /**
+     * Notify the locator that the indicated schema was just used for a
+     * sucessful validation.
+     *
+     * This information is particularly useful for SchemaLocators
+     * that do caching.  Other implementations may simply ignore the
+     * the message.
+     */
+    public void successfullyUsed(String uri) throws ValidatorException;
+
 }

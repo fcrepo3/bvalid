@@ -2,6 +2,7 @@ package net.sf.bvalid.xsd;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -21,6 +22,7 @@ public class LocatorEntityResolver implements EntityResolver {
     private String _primarySchemaURI;
 
     private String _lastResolvedSchemaURL;
+    private Set _resolvedURIs;
 
     public LocatorEntityResolver(SchemaLocator locator,
                                  boolean mustResolveAll,
@@ -28,6 +30,13 @@ public class LocatorEntityResolver implements EntityResolver {
         _locator = locator;
         _mustResolveAll = mustResolveAll;
         _primarySchemaURI = primarySchemaURI;
+
+        _resolvedURIs = new HashSet();
+    }
+
+    // 
+    public Set getResolvedURIs() {
+        return _resolvedURIs;
     }
 
     //-------------------------------------------[ org.xml.sax.EntityResolver ]
@@ -79,6 +88,7 @@ public class LocatorEntityResolver implements EntityResolver {
             if (systemId.startsWith("http://")) {
                 _lastResolvedSchemaURL = systemId;
             }
+            _resolvedURIs.add(systemId);
             return new InputSource(in);
         }
 
@@ -94,7 +104,9 @@ public class LocatorEntityResolver implements EntityResolver {
         // TODO: Implement DTD whitelisting
 
         _LOG.info("Resolving DTD: " + uri);
-        return new InputSource(_locator.get(uri, true));
+        InputSource inputSource = new InputSource(_locator.get(uri, true));
+        _resolvedURIs.add(uri);
+        return inputSource;
 
     }
 
