@@ -8,6 +8,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
 
+import org.apache.xerces.xni.grammars.XMLGrammarPool;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -28,6 +30,8 @@ public class XercesXSDValidator implements Validator {
 
     private SAXParserFactory _parserFactory;
 
+    private XMLGrammarPool _gPool;
+
     public XercesXSDValidator() throws ValidatorException {
         _failOnMissingReferencedSchema = true;
 
@@ -35,6 +39,10 @@ public class XercesXSDValidator implements Validator {
             _parserFactory = SAXParserFactory.newInstance();
             _parserFactory.setNamespaceAware(true);
             _parserFactory.setValidating(true);
+
+// TODO: Make parsed grammar object caching configgable by some prop
+            _gPool = new URLBasedGrammarPool();
+
         } catch (Throwable th) {
             throw new ValidatorException("Unable to initialize SAX parsing");
         }
@@ -76,6 +84,9 @@ public class XercesXSDValidator implements Validator {
                     "http://java.sun.com/xml/jaxp/properties/schemaSource",
                     schemaURI);
             }
+            if (_gPool != null) {
+                parser.setProperty("http://apache.org/xml/properties/internal/grammar-pool", _gPool);
+            }
 
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(errorHandler);
@@ -101,12 +112,8 @@ public class XercesXSDValidator implements Validator {
             }
             throw new ValidationException(msg.toString());
         } else {
-            // if successful, notify the locator of the schemas used
-            int count = 0;
-            StringBuffer resolvedList = null;
-            if (_LOG.isDebugEnabled()) {
-                resolvedList = new StringBuffer();
-            }
+            // if successful, notify the locator of the schemas that
+            // were obtained from it during validation
             Iterator iter = entityResolver.getResolvedURIs().iterator();
             while (iter.hasNext()) {
                 String uri = (String) iter.next();
@@ -115,17 +122,6 @@ public class XercesXSDValidator implements Validator {
                 } catch (ValidatorException e) {
                     throw new ValidationException("Validation failed due to validator error", e);
                 }
-                if (resolvedList != null) {
-                    resolvedList.append("\n" + uri);
-                }
-                count++;
-            }
-            if (_LOG.isInfoEnabled()) {
-                _LOG.info("Instance validated using " + count + " schema file(s)");
-            }
-            if (_LOG.isDebugEnabled() && count > 0) {
-                _LOG.debug("Used the following schema file(s) for validation: "
-                        + resolvedList);
             }
         }
 

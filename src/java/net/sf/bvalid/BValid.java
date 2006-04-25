@@ -23,21 +23,26 @@ public class BValid {
         SchemaIndex index = new FileSchemaIndex(new File("schema-index.txt"));
         DiskSchemaCatalog cacheCatalog = new DiskSchemaCatalog(index, cacheDir);
 
-        SchemaLocator cachingLocator = 
+        SchemaLocator persistentCachingLocator = 
                 new CachingSchemaLocator(new MemorySchemaCatalog(),
                                          cacheCatalog,
+                                         //new MemorySchemaCatalog(),
                                          new WebSchemaLocator());
 
         Validator validator = 
                 ValidatorFactory.getValidator(SchemaLanguage.XSD,
-                                              cachingLocator,
+                                              persistentCachingLocator,
                                               true);
 
         try {
+            int num = 2;
+            long now = System.currentTimeMillis();
+            for (int i = 0; i < num; i++) {
             validator.validate(new FileInputStream(new File(args[0])));
-            validator.validate(new FileInputStream(new File(args[0])));
-            validator.validate(new FileInputStream(new File(args[0])));
-            validator.validate(new FileInputStream(new File(args[0])));
+            }
+            long dur = System.currentTimeMillis() - now;
+            long msPerDoc = dur / num;
+            System.out.println("Avg time/doc = " + msPerDoc);
             System.out.println("OK");
             System.exit(0);
         } catch (ValidationException e) {

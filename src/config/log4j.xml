@@ -14,9 +14,9 @@
       <param name="ConversionPattern" value="%p %d{yyyy-MM-dd' 'HH:mm:ss.SSS} [%t] (%c{1}) %m%n"/>
     </layout>
   </appender>
- 
+
   <category name="net.sf.bvalid">
-    <priority value="DEBUG" />
+    <priority value="INFO" />
   </category>
   
   <root>
