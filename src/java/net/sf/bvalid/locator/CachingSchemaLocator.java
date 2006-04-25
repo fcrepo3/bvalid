@@ -2,26 +2,34 @@ package net.sf.bvalid.locator;
 
 import java.io.*;
 
+import org.apache.log4j.Logger;
+
 import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.catalog.SchemaCatalog;
 
 public class CachingSchemaLocator implements SchemaLocator {
 
-    private SchemaCatalog _catalog;
+    private static Logger _LOG = Logger.getLogger(CachingSchemaLocator.class.getName());
+
+    private SchemaCatalog _candidateCatalog;
+    private SchemaCatalog _cacheCatalog;
     private SchemaLocator _locator;
 
-    public CachingSchemaLocator(SchemaCatalog catalog,
+    public CachingSchemaLocator(SchemaCatalog candidateCatalog,
+                                SchemaCatalog cacheCatalog,
                                 SchemaLocator locator) {
-        _catalog = catalog;
+        _candidateCatalog = candidateCatalog;
+        _cacheCatalog = cacheCatalog;
         _locator = locator;
     }
 
-    public InputStream get(String uri, 
+    public synchronized InputStream get(String uri, 
                            boolean required) throws ValidatorException {
 
-        InputStream in = _catalog.get(uri);
+        InputStream in = _cacheCatalog.get(uri);
         if (in != null) {
-            // found in catalog, just return it
+            // found in cache catalog, just return it
+            _LOG.info("Got from cache: " + uri);
             return in;
         } else {
             // not found in catalog, try locator
@@ -29,16 +37,27 @@ public class CachingSchemaLocator implements SchemaLocator {
             if (in == null) {
                 return null;
             } else {
-                // found by locator; cache it, then re-read it from catalog
-                _catalog.put(uri, in);
-                return _catalog.get(uri);
+                // found by locator; add to candidateCatalog, then re-read it
+                _LOG.debug("Added to candidate catalog: " + uri);
+                _candidateCatalog.put(uri, in);
+                return _candidateCatalog.get(uri);
             }
         }
 
     }
 
-    public void successfullyUsed(String uri) throws ValidatorException {
-        throw new ValidatorException("successfullyUsed is not yet implemented!");
+    public synchronized void successfullyUsed(String uri) throws ValidatorException {
+
+        if (!_cacheCatalog.contains(uri)) {
+            // not yet cached
+            if (_candidateCatalog.contains(uri)) {
+                // is candidate, so move from candidate to cache catalog
+                InputStream in = _candidateCatalog.get(uri);
+                _cacheCatalog.put(uri, in);
+                _candidateCatalog.remove(uri);
+                _LOG.debug("Cached because successfully used: " + uri);
+            }
+        }
     }
 
 }
