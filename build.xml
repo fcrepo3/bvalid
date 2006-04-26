@@ -37,8 +37,8 @@
           depends="classes"
           description="build all test classes into build/testclasses">
     <mkdir dir="build/testclasses"/>
-    <javac srcdir="src/testjava" destdir="build/testclasses"
-           includes="**"
+    <javac srcdir="src/test" destdir="build/testclasses"
+           includes="net/sf/bvalid/**"
            classpathref="test.path"
            optimize="${optimize}" debug="${debug}"/>
   </target>
