@@ -6,6 +6,12 @@ import java.util.*;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Recieves error messages during validation and makes them
+ * available for later use.
+ * 
+ * @author cwilper@cs.cornell.edu
+ */
 public class XSDErrorHandler implements ErrorHandler {
 
     private List _errorList;
@@ -13,7 +19,11 @@ public class XSDErrorHandler implements ErrorHandler {
     public XSDErrorHandler() {
     }
 
-    // null indicates no error
+    /**
+     * Get the list of errors that occurred during validation.
+     *
+     * A null value indicates no errors.
+     */
     public List getErrorList() {
         return _errorList;
     }

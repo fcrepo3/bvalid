@@ -4,6 +4,11 @@ import java.io.*;
 
 import net.sf.bvalid.locator.SchemaLocator;
 
+/**
+ * An XML document validator.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public interface Validator {
 
     /**

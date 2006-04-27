@@ -11,6 +11,11 @@ import net.sf.bvalid.locator.CachingSchemaLocator;
 import net.sf.bvalid.locator.SchemaLocator;
 import net.sf.bvalid.locator.WebSchemaLocator;
 
+/**
+ * Test class.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class BValid {
 
     public static void main(String[] args) throws Exception {

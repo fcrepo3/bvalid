@@ -9,11 +9,13 @@ import org.apache.xerces.xni.grammars.XMLGrammarDescription;
 import org.apache.xerces.xni.grammars.XMLGrammarPool;
 
 /**
- * An implementation of XMLGrammarPool that is keyed by source URL.
+ * An implementation of <code>XMLGrammarPool</code>, keyed by source URL.
  *
  * Keying by location, rather than root element name or target namespace,
- * is necessary in order to support multiple (differing!) grammar definitions
- * in the same namespace.
+ * is necessary in order to support multiple (possibly conflict!) grammar 
+ * definitions for the same namespace.
+ *
+ * @author cwilper@cs.cornell.edu
  */
 public class URLBasedGrammarPool implements XMLGrammarPool {
 
@@ -85,16 +87,6 @@ public class URLBasedGrammarPool implements XMLGrammarPool {
             _LOG.debug("Grammar not retrieved; null expandedSystemId");
             return null;
         }
-        /*
-        _LOG.debug("Trying to retrieve grammar with the following properties:\n"
-                + "grammarType      : " + desc.getGrammarType() + "\n"
-                + "baseSystemId     : " + desc.getBaseSystemId() + "\n"
-                + "expandedSystemId : " + desc.getExpandedSystemId() + "\n"
-                + "literalSystemId  : " + desc.getLiteralSystemId() + "\n"
-                + "namespace        : " + desc.getNamespace() + "\n"
-                + "publicId         : " + desc.getPublicId());
-        return null;
-        */
     }
 
     public void lockPool() {

@@ -7,6 +7,12 @@ import org.apache.log4j.Logger;
 import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.catalog.SchemaCatalog;
 
+/**
+ * A <code>SchemaLocator</code> that automatically caches successfully-used
+ * schemas to an underlying catalog.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class CachingSchemaLocator implements SchemaLocator {
 
     private static Logger _LOG = Logger.getLogger(CachingSchemaLocator.class.getName());

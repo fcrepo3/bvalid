@@ -4,6 +4,11 @@ import java.io.*;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * Finds schema files given a URI (which is often a URL).
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public interface SchemaLocator {
 
     /**

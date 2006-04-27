@@ -13,6 +13,11 @@ import net.sf.bvalid.locator.SchemaLocator;
 import net.sf.bvalid.locator.WebSchemaLocator;
 import net.sf.bvalid.xsd.XercesXSDValidator;
 
+/**
+ * Provides methods for getting Validator instances.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public abstract class ValidatorFactory {
 
     /**

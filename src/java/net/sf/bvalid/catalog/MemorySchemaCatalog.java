@@ -5,6 +5,11 @@ import java.util.*;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A <code>SchemaCatalog</code> based entirely in memory.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class MemorySchemaCatalog implements SchemaCatalog {
 
     private Map _map;

@@ -7,6 +7,12 @@ import org.apache.log4j.Logger;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A <code>SchemaCatalog</code> that uses a given <code>SchemaIndex</code>
+ * in conjunction with files on disk.
+ * 
+ * @author cwilper@cs.cornell.edu
+ */
 public class DiskSchemaCatalog implements SchemaCatalog {
 
     private static Logger _LOG = 

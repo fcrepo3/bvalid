@@ -13,6 +13,12 @@ import org.xml.sax.SAXException;
 import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.locator.SchemaLocator;
 
+/**
+ * An <code>EntityResolver</code> that does its work using a
+ * <code>SchemaLocator</code>.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class LocatorEntityResolver implements EntityResolver {
 
     private static Logger _LOG = Logger.getLogger(LocatorEntityResolver.class.getName());
@@ -101,7 +107,7 @@ public class LocatorEntityResolver implements EntityResolver {
 
         String uri = getDTDURI(publicId, systemId);
 
-        // TODO: Implement DTD whitelisting
+        // TODO: Implement DTD whitelisting???
 
         _LOG.info("Resolving DTD: " + uri);
         InputSource inputSource = new InputSource(_locator.get(uri, true));

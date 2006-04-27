@@ -21,6 +21,11 @@ import net.sf.bvalid.ValidationException;
 import net.sf.bvalid.Validator;
 import net.sf.bvalid.locator.SchemaLocator;
 
+/**
+ * An XSD <code>Validator</code> implemented using Xerces.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class XercesXSDValidator implements Validator {
 
     private static Logger _LOG = Logger.getLogger(XercesXSDValidator.class.getName());

@@ -7,6 +7,12 @@ import org.apache.log4j.Logger;
 import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.catalog.SchemaCatalog;
 
+/**
+ * A <code>SchemaLocator</code> that uses a <code>Catalog</code> as
+ * its sole data source.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class CatalogSchemaLocator implements SchemaLocator {
 
     private static Logger _LOG = Logger.getLogger(CatalogSchemaLocator.class.getName());
@@ -27,6 +33,7 @@ public class CatalogSchemaLocator implements SchemaLocator {
         }
     }
 
+    // no-op
     public void successfullyUsed(String uri) { }
 
 }

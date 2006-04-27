@@ -7,6 +7,11 @@ import org.apache.log4j.Logger;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A file-backed <code>SchemaIndex</code> implementation.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class FileSchemaIndex implements SchemaIndex {
 
     public static final int DEFAULT_REFRESH_SECONDS = 60;

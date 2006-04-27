@@ -18,7 +18,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * 
  * Provides option for client to handle HTTP redirects
  */
-
 public class WebClient {
 
     /** Seconds to wait before a connection is established. */

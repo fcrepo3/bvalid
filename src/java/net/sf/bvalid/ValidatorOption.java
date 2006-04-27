@@ -5,6 +5,8 @@ package net.sf.bvalid;
  *
  * Options are passed to the <code>ValidatorFactory</code> when
  * obtaining a validator.
+ *
+ * @author cwilper@cs.cornell.edu
  */
 public class ValidatorOption {
 

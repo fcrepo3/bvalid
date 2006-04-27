@@ -4,6 +4,11 @@ import java.util.*;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A mapping of schema URI-to-filename.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public interface SchemaIndex {
 
     public Set getURISet() throws ValidatorException;

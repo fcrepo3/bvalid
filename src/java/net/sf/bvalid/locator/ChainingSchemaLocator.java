@@ -7,6 +7,12 @@ import org.apache.log4j.Logger;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A <code>SchemaLocator</code> that uses multiple locators, in order,
+ * to resolve schema files.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class ChainingSchemaLocator implements SchemaLocator {
 
     private static Logger _LOG = Logger.getLogger(ChainingSchemaLocator.class.getName());

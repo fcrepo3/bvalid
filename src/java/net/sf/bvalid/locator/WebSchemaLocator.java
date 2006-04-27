@@ -8,6 +8,13 @@ import net.sf.bvalid.ValidatorException;
 import net.sf.bvalid.util.WebClient;
 import net.sf.bvalid.util.HttpInputStream;
 
+/**
+ *
+ * A <code>SchemaLocator</code> that uses a <code>WebClient</code> as
+ * its sole data source.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class WebSchemaLocator implements SchemaLocator {
 
     private static Logger _LOG = Logger.getLogger(WebSchemaLocator.class.getName());

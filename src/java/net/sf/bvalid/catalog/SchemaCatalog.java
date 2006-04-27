@@ -5,6 +5,11 @@ import java.util.*;
 
 import net.sf.bvalid.ValidatorException;
 
+/**
+ * A collection of schema files, keyed by URI.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public interface SchemaCatalog {
 
     public boolean contains(String uri) throws ValidatorException;

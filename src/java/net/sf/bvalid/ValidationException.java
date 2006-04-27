@@ -1,5 +1,10 @@
 package net.sf.bvalid;
 
+/**
+ * Signals that validation failed.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
 public class ValidationException extends ValidatorException {
 
     public ValidationException(String msg) {
