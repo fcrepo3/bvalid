@@ -26,34 +26,34 @@ public class XercesXSDValidator implements Validator {
     private static Logger _LOG = Logger.getLogger(XercesXSDValidator.class.getName());
 
     private SchemaLocator _locator;
-    private boolean _failOnMissingReferencedSchema;
+
+    private boolean _failOnMissingReferenced;
 
     private SAXParserFactory _parserFactory;
 
     private XMLGrammarPool _gPool;
 
-    public XercesXSDValidator() throws ValidatorException {
-        _failOnMissingReferencedSchema = true;
+    public XercesXSDValidator(SchemaLocator locator,
+                              boolean failOnMissingReferenced,
+                              boolean cacheParsedGrammars)
+            throws ValidatorException {
+
+        _failOnMissingReferenced = failOnMissingReferenced;
+
+        _locator = locator;
 
         try {
             _parserFactory = SAXParserFactory.newInstance();
             _parserFactory.setNamespaceAware(true);
             _parserFactory.setValidating(true);
 
-// TODO: Make parsed grammar object caching configgable by some prop
-            _gPool = new URLBasedGrammarPool();
+            if (cacheParsedGrammars) {
+                _gPool = new URLBasedGrammarPool();
+            }
 
         } catch (Throwable th) {
             throw new ValidatorException("Unable to initialize SAX parsing");
         }
-    }
-
-    public void setSchemaLocator(SchemaLocator locator) {
-        _locator = locator;
-    }
-
-    public void setFailOnMissingReferencedSchema(boolean value) {
-        _failOnMissingReferencedSchema = value;
     }
 
     public void validate(InputStream xmlStream, 
@@ -70,7 +70,7 @@ public class XercesXSDValidator implements Validator {
 
         LocatorEntityResolver entityResolver = 
                 new LocatorEntityResolver(_locator,
-                                          _failOnMissingReferencedSchema,
+                                          _failOnMissingReferenced,
                                           schemaURI);
         XSDErrorHandler errorHandler = new XSDErrorHandler();
         try {

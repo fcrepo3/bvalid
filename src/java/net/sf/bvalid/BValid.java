@@ -1,6 +1,7 @@
 package net.sf.bvalid;
 
 import java.io.*;
+import java.util.*;
 
 import net.sf.bvalid.catalog.DiskSchemaCatalog;
 import net.sf.bvalid.catalog.FileSchemaIndex;
@@ -18,21 +19,12 @@ public class BValid {
         System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.commons.logging.impl.Log4jFactory");
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Log4JLogger");
 
-        File cacheDir = new File("cache");
-        cacheDir.mkdirs();
-        SchemaIndex index = new FileSchemaIndex(new File("schema-index.txt"));
-        DiskSchemaCatalog cacheCatalog = new DiskSchemaCatalog(index, cacheDir);
-
-        SchemaLocator persistentCachingLocator = 
-                new CachingSchemaLocator(new MemorySchemaCatalog(),
-                                         cacheCatalog,
-                                         //new MemorySchemaCatalog(),
-                                         new WebSchemaLocator());
+        Map options = new HashMap();
+        options.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "true");
 
         Validator validator = 
                 ValidatorFactory.getValidator(SchemaLanguage.XSD,
-                                              persistentCachingLocator,
-                                              true);
+                                              options);
 
         try {
             int num = 2;

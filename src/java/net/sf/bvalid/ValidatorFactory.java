@@ -1,5 +1,14 @@
 package net.sf.bvalid;
 
+import java.io.*;
+import java.util.*;
+
+import net.sf.bvalid.catalog.DiskSchemaCatalog;
+import net.sf.bvalid.catalog.FileSchemaIndex;
+import net.sf.bvalid.catalog.MemorySchemaCatalog;
+import net.sf.bvalid.catalog.SchemaCatalog;
+import net.sf.bvalid.catalog.SchemaIndex;
+import net.sf.bvalid.locator.CachingSchemaLocator;
 import net.sf.bvalid.locator.SchemaLocator;
 import net.sf.bvalid.locator.WebSchemaLocator;
 import net.sf.bvalid.xsd.XercesXSDValidator;
@@ -7,48 +16,100 @@ import net.sf.bvalid.xsd.XercesXSDValidator;
 public abstract class ValidatorFactory {
 
     /**
-     * Get a validator for the given schema language, using the default 
-     * <code>SchemaLocator</code>.
-     *
-     * The default schema locator does no caching; it loads schemas from
-     * the web each time they're needed.
-     */
-    public static Validator getValidator(SchemaLanguage lang)
-            throws ValidatorException {
-        return getValidator(lang, new WebSchemaLocator());
-    }
-
-    /**
-     * Get a validator for the given schema language using the given 
-     * <code>SchemaLocator</code>.
+     * Get a validator without any schema file caching.
      */
     public static Validator getValidator(SchemaLanguage lang,
-                                         SchemaLocator locator)
+                                         Map validatorOptions)
             throws ValidatorException {
-        return getValidator(lang, locator, true);
+
+        return getValidator(lang, 
+                            new WebSchemaLocator(), 
+                            validatorOptions);
     }
 
     /**
-     * Get a validator for the given schema language using the given 
-     * <code>SchemaLocator</code>.
+     * Get a validator with automatic schema file caching.
+     */
+    public static Validator getValidator(SchemaLanguage lang,
+                                         File cacheDir,
+                                         Map options)
+            throws ValidatorException {
+
+        // create the cache directory if it doesn't already exist
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
+            if (!cacheDir.exists()) {
+                throw new ValidatorException("Unable to create schema "
+                        + "cache directory: " + cacheDir.getPath());
+            }
+        }
+
+        // use a file-based index for the cache, in cacheDir
+        File indexFile = new File(cacheDir, "index.dat");
+        SchemaIndex index = new FileSchemaIndex(indexFile);
+
+        // the disk-based catalog we'll use for the cache
+        SchemaCatalog catalog = 
+                new DiskSchemaCatalog(index,
+                                      cacheDir);
+
+        // use a caching locator
+        SchemaLocator locator = 
+                new CachingSchemaLocator(new MemorySchemaCatalog(),
+                                         catalog,
+                                         new WebSchemaLocator());
+
+        return getValidator(lang, locator, options);
+    }
+
+    /**
+     * Get a validator that uses the provided <code>SchemaLocator</code>.
      */
     public static Validator getValidator(SchemaLanguage lang,
                                          SchemaLocator locator,
-                                         boolean failOnMissingReferencedSchema) 
+                                         Map options)
             throws ValidatorException {
 
-        Validator validator = null;
+        if (options == null) options = new HashMap();
+
+        boolean failOnMissingReferenced =
+            getBoolean(options, ValidatorOption.FAIL_ON_MISSING_REFERENCED);
+
+        boolean cacheParsedGrammars =
+            getBoolean(options, ValidatorOption.CACHE_PARSED_GRAMMARS);
+
         if (lang == SchemaLanguage.XSD) {
-            validator = new XercesXSDValidator();
-        } 
-        
-        if (validator == null) {
-            throw new ValidatorException("No validator found for schema "
-                    + "language: " + lang.getName());
+            return new XercesXSDValidator(locator, 
+                                          failOnMissingReferenced,
+                                          cacheParsedGrammars);
         } else {
-            validator.setSchemaLocator(locator);
-            validator.setFailOnMissingReferencedSchema(failOnMissingReferencedSchema);
-            return validator;
+            throw new ValidatorException("Unrecognized schema language: " 
+                    + lang.toString());
+        }
+    }
+
+    private static boolean getBoolean(Map options, 
+                                      ValidatorOption option)
+            throws ValidatorException {
+
+        return getBoolean((String) options.get(option),
+                          option.getDefaultValue());
+    }
+
+    private static boolean getBoolean(String value, 
+                                      String defaultValue)
+            throws ValidatorException {
+
+        if (value == null) {
+            value = defaultValue;
+        }
+        if (value.equals("true")) {
+            return true;
+        } else if (value.equals("false")) {
+            return false;
+        } else {
+            throw new ValidatorException("Unrecognized boolean value: '" 
+                    + value + "', expected 'true' or 'false'");
         }
     }
 

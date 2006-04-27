@@ -14,23 +14,13 @@ public class DiskSchemaCatalog implements SchemaCatalog {
 
     private SchemaIndex _index;
     private File _storageDir;
-    private Collection _neverPruneFilenames;
 
     public DiskSchemaCatalog(SchemaIndex index,
                              File storageDir)
             throws ValidatorException {
 
-        this(index, storageDir, null);
-    }
-
-    public DiskSchemaCatalog(SchemaIndex index,
-                             File storageDir,
-                             Collection neverPruneFilenames)
-            throws ValidatorException {
-
         _index = index;
         _storageDir = storageDir;
-        _neverPruneFilenames = neverPruneFilenames;
 
         pruneStorageDir();
     }
@@ -38,14 +28,15 @@ public class DiskSchemaCatalog implements SchemaCatalog {
     private void pruneStorageDir() 
             throws ValidatorException {
 
-        Set keepNames;
+        Set keepNames = new HashSet();
 
-        if (_neverPruneFilenames == null) {
-            keepNames = new HashSet();
-        } else {
-            keepNames = new HashSet(_neverPruneFilenames);
+        // keep the index itself, if stored in same dir
+        if (_index instanceof FileSchemaIndex) {
+            File indexFile = ((FileSchemaIndex) _index).getIndexFile();
+            keepNames.add(indexFile.getName());
         }
 
+        // keep all files currently referenced by the index
         Iterator iter = _index.getURISet().iterator();
         while (iter.hasNext()) {
             String uri = (String) iter.next();

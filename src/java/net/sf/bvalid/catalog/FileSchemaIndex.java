@@ -36,6 +36,12 @@ public class FileSchemaIndex implements SchemaIndex {
         loadIndex(true);
     }
 
+    //---------------------------------------------[ Package-visible methods ]
+
+    protected File getIndexFile() {
+        return _indexFile;
+    }
+
     //------------------------------------------[ SchemaIndex implementation ]
 
     public synchronized Set getURISet() 
