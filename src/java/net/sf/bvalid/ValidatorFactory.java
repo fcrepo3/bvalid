@@ -10,7 +10,7 @@ import net.sf.bvalid.catalog.SchemaCatalog;
 import net.sf.bvalid.catalog.SchemaIndex;
 import net.sf.bvalid.locator.CachingSchemaLocator;
 import net.sf.bvalid.locator.SchemaLocator;
-import net.sf.bvalid.locator.WebSchemaLocator;
+import net.sf.bvalid.locator.URLSchemaLocator;
 import net.sf.bvalid.xsd.XercesXSDValidator;
 
 /**
@@ -28,7 +28,7 @@ public abstract class ValidatorFactory {
             throws ValidatorException {
 
         return getValidator(lang, 
-                            new WebSchemaLocator(), 
+                            new URLSchemaLocator(), 
                             validatorOptions);
     }
 
@@ -62,7 +62,7 @@ public abstract class ValidatorFactory {
         SchemaLocator locator = 
                 new CachingSchemaLocator(new MemorySchemaCatalog(),
                                          catalog,
-                                         new WebSchemaLocator());
+                                         new URLSchemaLocator());
 
         return getValidator(lang, locator, options);
     }

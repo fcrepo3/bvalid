@@ -9,7 +9,7 @@ import net.sf.bvalid.catalog.MemorySchemaCatalog;
 import net.sf.bvalid.catalog.SchemaIndex;
 import net.sf.bvalid.locator.CachingSchemaLocator;
 import net.sf.bvalid.locator.SchemaLocator;
-import net.sf.bvalid.locator.WebSchemaLocator;
+import net.sf.bvalid.locator.URLSchemaLocator;
 
 /**
  * Test class.
