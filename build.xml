@@ -96,13 +96,16 @@
   <target name="doc"
           depends="prep"
           description="Build the documentation in dist/doc">
-    <javadoc packagenames="net.sf.bvalid.*"
+    <copy todir="dist/doc">
+      <fileset dir="src/doc"/>
+    </copy>
+    <javadoc packagenames="net.sf.bvalid, net.sf.bvalid.locator, net.sf.bvalid.catalog, net.sf.bvalid.util"
              classpathref="compile.path"
              sourcepath="src/java"
              defaultexcludes="yes"
              destdir="dist/doc/api"
-             windowtitle="BValid Javadocs">
-      <doctitle><![CDATA[<h1>BValid Javadocs</h1>]]></doctitle>
+             windowtitle="BValid Java API">
+      <doctitle><![CDATA[<h1>BValid Java API</h1>]]></doctitle>
     </javadoc>
   </target>
 

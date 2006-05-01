@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>BValid XML Validation API</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+<div id="header">
+    <div id="title">
+        <h2>BValid XML Validation API</h2>
+        <h2>User Guide</h2>
+    </div>
+</div>
+
+<div class="toc">
+    <h2>Contents</h2>
+    <div class="tocbox">
+        
+    <ol>
+		<li><a href="#intro">Introduction</a></li>
+		<li><a href="#api">The Java API</a></li>
+		<li><a href="#cmdline">The Unix/Windows Command-Line Utility</a></li>
+    </ol>
+    </div>
+</div>
+
+<div class="sec2">
+  <h2><a name="intro">1. Introduction</a></h2>
+  <p>
+    BValid is a Java API designed for high-performance validation of XML documents.
+    It defines and implements several interfaces to make validation flexible
+    and consistent across schema languages.
+  </p>
+<!--      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre></div> -->
+</div>
+
+<div class="sec2">
+  <h2><a name="api">2. The Java API</a></h2>
+  <p>
+    The main interface you work with is the <code>Validator</code>.
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="cmdline">3. The Unix/Windows Command-Line Utility</a></h2>
+  <p>
+    The <code>bvalid</code> command-line utility is a simple application of the API that
+    can be used for validating a single XML document at a time.
+  </p>
+  <div class="code"><pre>Usage: bvalid [OPTIONS] LANG XMLFILE
+   Or: bvalid --version
+   Or: bvalid --help
+
+Where:
+  LANG            a supported schema language, such as xsd
+  XMLFILE         the path to the instance file to validate
+
+Options:
+  -cf, --cache-files     Cache schema files locally
+  -co, --cache-objects   Cache parsed grammar objects in memory
+  -am, --allow-missing   Allow missing referenced schemas.  If the instance
+                         includes references to schemas that can't be found,
+                         this will skip them rather than failing validation.
+  --repeat=n             Repeat the validation n times (for testing)
+  --schema=file          Use the given schema file (url or filename)
+  -v, --version          Print version and exit (exclusive option)
+  -h, --help             Print help and exit (exclusive option)</pre></div>
+</div>
+
+<div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2006
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date: 2006/05/01 01:11:27 $";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+</div>
+</body>
+</html>
