@@ -3,7 +3,7 @@
 goto checkEnv
 
 :envOk
-java -Xms64m -Xmx96m -cp "%BVALID_HOME%\bvalid.jar" -Djava.endorsed.dirs="%BVALID_HOME%\lib" -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl net.sf.bvalid.BValid %1 %2 %3 %4 %5 %6 %7 %8 %9
+java -Xms64m -Xmx96m -cp "%BVALID_HOME%\bvalid.jar" -Djava.endorsed.dirs="%BVALID_HOME%\lib" -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dlog4j.configuration="file:/%BVALID_HOME%\log4j.xml" net.sf.bvalid.BValid %1 %2 %3 %4 %5 %6 %7 %8 %9
 if errorlevel 1 goto endWithError
 goto end
 

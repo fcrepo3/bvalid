@@ -140,7 +140,11 @@ public class BValid {
                 _LOG.info("Validation of " + xmlFile.getPath() + " succeeded in " + ms + "ms.");
             } catch (ValidationException e) {
                 long ms = System.currentTimeMillis() - st;
-                _LOG.error("Validation of " + xmlFile.getPath() + " failed in " + ms + "ms.\n" + e.getMessage());
+                if (e.getCause() != null) {
+                    _LOG.error("Validation of " + xmlFile.getPath() + " failed in " + ms + "ms.", e.getCause());
+                } else {
+                    _LOG.error("Validation of " + xmlFile.getPath() + " failed in " + ms + "ms.\n" + e.getMessage());
+                }
             }
         }
         long total = System.currentTimeMillis() - startTime;
@@ -222,7 +226,6 @@ public class BValid {
                         throw new ArgException("unrecognized argument: " + args[i]);
                     }
                 } else {
-                    System.out.println("Naked arg: " + args[i]);
                     if (_lang == null) {
                         try {
                             _lang = SchemaLanguage.forName(args[i]);

@@ -15,7 +15,7 @@
     </layout>
   </appender>
 
-  <category name="net.sf.bvalid">
+  <category name="net.sf.bvalid.BValid">
     <priority value="INFO" />
   </category>
   
