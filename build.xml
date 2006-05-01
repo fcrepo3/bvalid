@@ -3,6 +3,9 @@
 
   <loadproperties srcFile="build.properties"/>
 
+  <!-- defines bvalid.version -->
+  <loadproperties srcFile="src/java/net/sf/bvalid/BValid.properties"/>
+
   <path id="base.path">
     <pathelement location="${lib.xml-apis}"/>
     <pathelement location="${lib.xerces}"/>
@@ -60,6 +63,34 @@
     </copy>
     <chmod dir="dist" perm="ugo+x" includes="bvalid"/>
     <jar jarfile="dist/bvalid.jar" basedir="build/classes"/>
+  </target>
+
+  <target name="srcrelease" depends="clean">
+    <copy todir="dist/release/bvalid-${bvalid.version}-src">
+      <fileset dir=".">
+        <exclude name="dist/**"/>
+      </fileset>
+    </copy>
+    <zip zipfile="dist/release/bvalid-${bvalid.version}-src.zip" basedir="dist/release" includes="bvalid-${bvalid.version}-src/**"/>
+    <delete dir="dist/release/bvalid-${bvalid.version}-src"/>
+  </target>
+
+  <target name="binrelease" depends="dist">
+    <copy todir="dist/release/bvalid-${bvalid.version}">
+      <fileset dir="dist">
+        <exclude name="release/**"/>
+      </fileset>
+    </copy>
+    <zip zipfile="dist/release/bvalid-${bvalid.version}.zip" basedir="dist/release" includes="bvalid-${bvalid.version}/**"/>
+    <delete dir="dist/release/bvalid-${bvalid.version}"/>
+  </target>
+
+  <target name="release" depends="srcrelease,binrelease" description="Build the source and binary distributions in dist/release">
+    <checksum fileext=".md5">
+      <fileset dir="dist/release">
+        <include name="*.zip"/>
+      </fileset>
+    </checksum>
   </target>
 
   <target name="doc"
