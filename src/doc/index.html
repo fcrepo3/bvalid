@@ -22,11 +22,15 @@
         
     <ol>
 		<li><a href="#intro">Introduction</a></li>
-		<li><a href="#api">The Java API</a></li>
-		<li><a href="#cmdline">The Unix/Windows Command-Line Utility</a></li>
+		<li><a href="#inst">Downloading and Installing</a></li>
+		<li><a href="#api">API Documentation</a></li>
+		<li><a href="#cmdline">Command-Line Utility</a></li>
+		<li><a href="#issues">Known Issues</a></li>
     </ol>
     </div>
 </div>
+
+<p>&nbsp;</p>
 
 <div class="sec2">
   <h2><a name="intro">1. Introduction</a></h2>
@@ -35,21 +39,162 @@
     It defines and implements several interfaces to make validation flexible
     and consistent across schema languages.
   </p>
-<!--      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre></div> -->
-</div>
-
-<div class="sec2">
-  <h2><a name="api">2. The Java API</a></h2>
   <p>
-    The main interface you work with is the <code>Validator</code>.
+    Distinguishing features:
+    <ul>
+      <li> Implements a persistent schema file cache</li>
+      <li> Works with pluggable schema resolvers / catalogs</li>
+      <li> Wraps existing, quality validation libraries rather than implementing its own</li>
+    </ul>
   </p>
 </div>
 
+<p>&nbsp;</p>
+
 <div class="sec2">
-  <h2><a name="cmdline">3. The Unix/Windows Command-Line Utility</a></h2>
+  <h2><a name="api">2. Downloading and Installing</a></h2>
+  <p>
+    The latest distribution (source and binary) can be downloaded from
+    <a href="http://www.sf.net/projects/bvalid">http://www.sf.net/projects/bvalid</a>
+  </p>
+  <p>
+    After unzipping the binary distribution, you should be able to use the 
+    <code>bvalid</code> <a href="#cmdline">command-line utility</a> right away.
+  </p>
+  <p>
+    To begin using bvalid in your own projects, you'll need the 
+    following jars (included) in your CLASSPATH:
+    <ul>
+      <li> <b>bvalid.jar</b> - the BValid API</li>
+      <li> lib/<b>commons-httpclient-2.0.1.jar</b> - for resolving schemas via http</li>
+      <li> lib/<b>commons-logging.jar</b> - for logging (required by commons-httpclient)</li>
+      <li> lib/<b>log4j-1.2.8.jar</b> - for logging</li>
+      <li> lib/<b>xercesImpl.jar</b> - for XML parsing and XSD validation</li>
+      <li> lib/<b>xml-apis.jar</b> - for XML parsing</li>
+    </ul>
+  </p>
+</div>
+
+<p>&nbsp;</p>
+
+<div class="sec2">
+  <h2><a name="api">3. API Documentation</a></h2>
+  <p>
+    The main interface you work with is the <a href="api/net/sf/bvalid/Validator.html">Validator</a>.  Once you have obtained an instance from the <a href="api/net/sf/bvalid/ValidatorFactory.html">ValidatorFactory</a>, you can use it to validate any number of XML documents from any number of concurrent threads.  
+    </p>
+<p>
+  To become familar with the API, see the examples below, 
+  then check out the <a href="api/index.html">API Javadocs</a> 
+  for more detailed information.
+</p>
+  <p>
+    The following example uses a validator without any special configuration.
+  </p>
+  <div class="code"><pre>
+Validator v = ValidatorFactory.getValidator(SchemaLanguage.XSD, null);
+
+try {
+    File doc = new File("mydoc.xml");
+    v.validate(new FileInputStream(doc));
+    System.out.println("Validation SUCCESSFUL!");
+} catch (ValidationException e) {
+    System.out.println("Validation FAILED: " + e.getMessage());
+    if (e.getCause() != null) {
+        e.getCause().printStackTrace();
+    }
+}
+</pre></div>
+  <p>
+    This next example uses a validator that automatically caches
+    schema files to disk, and keeps parsed grammars in memory for re-use.
+  </p>
+  <div class="code"><pre>
+File cacheDir = new File("mySchemaCache");
+cacheDir.mkdirs();
+
+Map opts = new HashMap();
+opts.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "true");
+
+Validator v = ValidatorFactory.getValidator(SchemaLanguage.XSD, 
+                                            cacheDir,
+                                            opts);
+
+try {
+    File doc = new File("mydoc.xml");
+    v.validate(new FileInputStream(doc));
+    System.out.println("Validation SUCCESSFUL!");
+} catch (ValidationException e) {
+    System.out.println("Validation FAILED: " + e.getMessage());
+    if (e.getCause() != null) {
+        e.getCause().printStackTrace();
+    }
+}
+</pre></div>
+  <p>
+    The final example, below, is more advanced.  It demonstrates using a
+    <a href="api/net/sf/bvalid/locator/SchemaLocator.html">SchemaLocator</a> backed 
+    by a pre-populated, memory-based 
+    <a href="api/net/sf/bvalid/catalog/SchemaCatalog.html">SchemaCatalog</a>.
+    It also instructs the validator NOT to fail if the instance document
+    references a schema that isn't in the catalog.
+    This effectively causes the validator to ONLY use our local schema 
+    copies (when referenced), and to skip validation for parts of the 
+    document that point to other schemas.
+  </p>
+  </p>
+  <div class="code"><pre>
+File schema1 = new File("my-schema1.xsd");
+File schema2 = new File("my-schema2.xsd");
+
+SchemaCatalog catalog = new MemorySchemaCatalog();
+catalog.put("http://example.org/schema1.xsd", new FileInputStream(schema1));
+catalog.put("http://example.org/schema2.xsd", new FileInputStream(schema2));
+
+SchemaLocator locator = new CatalogSchemaLocator(catalog);
+
+Map opts = new HashMap();
+opts.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "true");
+opts.put(ValidatorOption.FAIL_ON_MISSING_REFERENCED, "false");
+
+Validator v = ValidatorFactory.getValidator(SchemaLanguage.XSD, 
+                                            locator,
+                                            opts);
+try {
+    File doc = new File("mydoc.xml");
+    v.validate(new FileInputStream(doc));
+    System.out.println("Validation SUCCESSFUL!");
+} catch (ValidationException e) {
+    System.out.println("Validation FAILED: " + e.getMessage());
+    if (e.getCause() != null) {
+        e.getCause().printStackTrace();
+    }
+}
+</pre></div>
+
+    
+</div>
+
+<p>&nbsp;</p>
+
+<div class="sec2">
+  <h2><a name="cmdline">4. Command-Line Utility</a></h2>
   <p>
     The <code>bvalid</code> command-line utility is a simple application of the API that
-    can be used for validating a single XML document at a time.
+    can be used to validate a single XML document at a time.
+  </p>
+  <p>
+    To use it, 
+    change to the directory where the BValid binary distribution has been installed,
+    and type <code><b>bvalid</b></code>.  If you want to run it from any
+    directory, set the <code>BVALID_HOME</code> environment variable to the installation
+    directory, then add it to your <code>PATH</code>.
+  </p>
+  <p>
+    Note: In Unix, you will need to make the bvalid script executable before running
+    it.  This can be done with <code><b>chmod 755 bvalid</b></code>
+  </p>
+  <p>
+    Running <code><b>bvalid -h</b></code> displays the following usage information.
   </p>
   <div class="code"><pre>Usage: bvalid [OPTIONS] LANG XMLFILE
    Or: bvalid --version
@@ -69,6 +214,22 @@ Options:
   --schema=file          Use the given schema file (url or filename)
   -v, --version          Print version and exit (exclusive option)
   -h, --help             Print help and exit (exclusive option)</pre></div>
+</div>
+
+<p>&nbsp;</p>
+
+<div class="sec2">
+  <h2><a name="issues">5. Known Issues</a></h2>
+  <ul>
+  <li>
+    The present version only performs <a href="http://www.w3.org/XML/Schema">W3C Schema</a> validation.  Future
+    versions will also support <a href="http://www.schematron.com/">Schematron</a> 
+    and <a href="http://www.relaxng.org/">Relax NG</a> validation.
+  </li>
+    <li> <code>ValidationException</code> isn't clear about how multiple validation errors are reported.</li>
+    <li> Should the API include more direct support for schema whitelisting?  
+         Currently this is possible by writing your own SchemaLocator.</li>
+  </ul>
 </div>
 
 <div id="footer">

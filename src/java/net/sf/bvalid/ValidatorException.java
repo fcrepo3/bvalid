@@ -1,7 +1,7 @@
 package net.sf.bvalid;
 
 /**
- * Signals an error not directly related to validation.
+ * Superclass for all BValid-generated exceptions.
  *
  * @author cwilper@cs.cornell.edu
  */
