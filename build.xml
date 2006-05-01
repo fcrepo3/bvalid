@@ -75,7 +75,7 @@
     <delete dir="dist/release/bvalid-${bvalid.version}-src"/>
   </target>
 
-  <target name="binrelease" depends="dist">
+  <target name="binrelease" depends="dist,doc">
     <copy todir="dist/release/bvalid-${bvalid.version}">
       <fileset dir="dist">
         <exclude name="release/**"/>
