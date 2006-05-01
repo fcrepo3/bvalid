@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [ -z "$BVALID_HOME" ]; then
+    BVALID_HOME=.
+fi
+
+if [ ! -f "$BVALID_HOME/bvalid.jar" ]; then
+    echo "ERROR: $BVALID_HOME/bvalid.jar was not found."
+    echo "NOTE : To run bvalid from any directory, BVALID_HOME must be defined."
+    exit 1
+fi
+
+(exec java -Xms64m -Xmx96m \
+      -cp "$BVALID_HOME/bvalid.jar" \
+      -Djava.endorsed.dirs="$BVALID_HOME/lib" \
+      -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
+      -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
+      net.sf.bvalid.BValid $1 $2 $3 $4 $5 $6 $7 $8 $9)
+
+exit $?

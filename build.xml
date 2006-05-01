@@ -31,6 +31,15 @@
     <copy todir="build/classes">
       <fileset dir="src/config"/>
     </copy>
+    <copy file="src/java/net/sf/bvalid/BValid.properties" tofile="build/classes/net/sf/bvalid/BValid.properties"/>
+    <propertyfile file="build/version.properties">
+      <entry key="buildDate" type="date" value="now"/>
+    </propertyfile>
+    <replace file="build/classes/net/sf/bvalid/BValid.properties"
+             value="value not found in version.properties"
+             propertyFile="build/version.properties">
+      <replacefilter token="@buildDate@" property="buildDate"/>
+    </replace>
   </target>
 
   <target name="testclasses"
@@ -48,6 +57,10 @@
     <copy todir="dist/lib">
       <fileset dir="lib"/>
     </copy>
+    <copy todir="dist">
+      <fileset dir="src/bin"/>
+    </copy>
+    <chmod dir="dist" perm="ugo+x" includes="bvalid"/>
     <jar jarfile="dist/bvalid.jar" basedir="build/classes"/>
   </target>
 

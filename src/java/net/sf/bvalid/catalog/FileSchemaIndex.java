@@ -120,6 +120,7 @@ public class FileSchemaIndex implements SchemaIndex {
     protected static Map loadIndex(File indexFile) 
             throws IOException {
 
+        if (!indexFile.exists()) return new HashMap();
         InputStream in = new FileInputStream(indexFile);
         try {
 

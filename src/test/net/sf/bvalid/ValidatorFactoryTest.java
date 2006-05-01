@@ -1,9 +1,11 @@
 package net.sf.bvalid;
 
+import java.util.*;
+
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import net.sf.bvalid.locator.WebSchemaLocator;
+import net.sf.bvalid.locator.URLSchemaLocator;
 
 public class ValidatorFactoryTest extends TestCase {
 
@@ -17,25 +19,48 @@ public class ValidatorFactoryTest extends TestCase {
 
     //---------------------------------------------------------[ Test methods ]
 
-    public void testGetValidatorDefaultLocator() 
+    public void testGetValidatorDefault() 
             throws ValidatorException {
-        ValidatorFactory.getValidator(SchemaLanguage.XSD);
+
+        ValidatorFactory.getValidator(SchemaLanguage.XSD, null);
     }
 
-    public void testGetValidatorSpecificLocator() 
+    public void testGetValidatorCustom() 
             throws ValidatorException {
-        ValidatorFactory.getValidator(SchemaLanguage.XSD,
-                                         new WebSchemaLocator());
+
+        ValidatorFactory.getValidator(SchemaLanguage.XSD, 
+                                      new URLSchemaLocator(), 
+                                      null);
     }
 
-    public void testGetValidatorNoFailOnMissingSchema() 
+    public void testGetValidatorCustomWithGoodOptions() 
             throws ValidatorException {
-        ValidatorFactory.getValidator(SchemaLanguage.XSD,
-                                         new WebSchemaLocator(),
-                                         false);
+
+        Map options = new HashMap();
+        options.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "false");
+        ValidatorFactory.getValidator(SchemaLanguage.XSD, 
+                                      new URLSchemaLocator(), 
+                                      options);
+    }
+
+    public void testGetValidatorCustomWithBadOptions() 
+            throws ValidatorException {
+
+        Map options = new HashMap();
+        options.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "faults");
+        boolean threwException = false;
+        try {
+            ValidatorFactory.getValidator(SchemaLanguage.XSD, 
+                                          new URLSchemaLocator(), 
+                                          options);
+        } catch (ValidatorException e) {
+            threwException = true;
+        }
+        assertEquals("Should have thrown exception due to bad option", true, threwException);
     }
 
     public static void main(String[] args) {
+
         TestRunner.run(ValidatorFactoryTest.class);
     }   
 
