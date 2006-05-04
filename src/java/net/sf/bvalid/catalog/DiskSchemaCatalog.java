@@ -77,6 +77,7 @@ public class DiskSchemaCatalog implements SchemaCatalog {
             try {
                 return new FileInputStream(new File(_storageDir, filename));
             } catch (IOException e) {
+                _LOG.warn("Unable to read schema from disk (uri = " + uri + ", filename = " + filename + ")", e);
                 throw new ValidatorException("Error reading schema from disk", e);
             }
         }
