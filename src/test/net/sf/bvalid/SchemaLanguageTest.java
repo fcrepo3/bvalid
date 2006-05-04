@@ -1,7 +1,7 @@
 package net.sf.bvalid;
 
 import junit.framework.TestCase;
-import junit.textui.TestRunner;
+import junit.swingui.TestRunner;
 
 public class SchemaLanguageTest extends TestCase {
 

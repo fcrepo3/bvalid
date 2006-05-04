@@ -21,6 +21,7 @@
     <path refid="compile.path"/>
     <pathelement location="build/classes"/>
     <pathelement location="build/testclasses"/>
+    <pathelement location="src/config"/>
   </path>
 
   <target name="classes" 
@@ -110,16 +111,24 @@
   </target>
 
   <target name="test" description="Run tests" depends="testclasses">
-      <!-- 
-          For this task to run, prior to running ant, set CLASSPATH=lib\junit.jar
-      -->
     <junit printsummary="yes" haltonfailure="yes" showoutput="true">
       <formatter type="plain" usefile="false"/>
       <classpath refid="test.path"/>
       <sysproperty key="propname" value="propvalue"/>
-      <test name="net.sf.bvalid.SchemaLanguageTest"/>
-      <test name="net.sf.bvalid.ValidatorFactoryTest"/>
+      <test name="net.sf.bvalid.BValidPackageTestSuite"/>
     </junit>
+  </target>
+
+  <target name="itest" description="Run tests interactively" depends="testclasses">
+    <java classname="net.sf.bvalid.BValidPackageTestSuite"
+          fork="yes">
+      <classpath refid="test.path"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                   value="org.apache.commons.logging.impl.Log4jFactory"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                   value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <sysproperty key="log4j.ignoreTCL" value="true"/>
+    </java>
   </target>
 
   <target name="prep"

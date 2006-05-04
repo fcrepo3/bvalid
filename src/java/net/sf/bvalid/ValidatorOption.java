@@ -100,6 +100,7 @@ public class ValidatorOption {
         if (_validValues == null) {
             return true;
         } else {
+            if (value == null) return false;
             for (int i = 0; i < _validValues.length; i++) {
                 if (value.equals(_validValues[i])) {
                     return true;

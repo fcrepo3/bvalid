@@ -3,7 +3,7 @@ package net.sf.bvalid;
 import java.util.*;
 
 import junit.framework.TestCase;
-import junit.textui.TestRunner;
+import junit.swingui.TestRunner;
 
 import net.sf.bvalid.locator.URLSchemaLocator;
 
