@@ -30,6 +30,9 @@ public class LocatorEntityResolver implements EntityResolver {
     private String _lastResolvedSchemaURL;
     private Set _resolvedURIs;
 
+    private Set _inputStreams;
+    private boolean _closed;
+
     public LocatorEntityResolver(SchemaLocator locator,
                                  boolean mustResolveAll,
                                  String primarySchemaURI) {
@@ -38,11 +41,46 @@ public class LocatorEntityResolver implements EntityResolver {
         _primarySchemaURI = primarySchemaURI;
 
         _resolvedURIs = new HashSet();
+        _inputStreams = new HashSet();
+        _closed = false;
     }
 
     // 
     public Set getResolvedURIs() {
         return _resolvedURIs;
+    }
+
+    /**
+     * Clean up.
+     *
+     * This ensures that the underlying InputStreams of DataSources we have
+     * returned are closed.  This is important because Xerces doesn't take
+     * care of this for us.
+     */
+    public boolean close() {
+
+        if (!_closed) {
+            _LOG.debug("Closing " + _inputStreams.size() 
+                    + " returned DataSources' underlying InputStreams");
+            Iterator iter = _inputStreams.iterator();
+            _closed = true;
+            while (iter.hasNext()) {
+                InputStream in = (InputStream) iter.next();
+                try {
+                    in.close();
+                } catch (Exception e) {
+                    _closed = false;
+                }
+            }
+        }
+        return _closed;
+    }
+
+    /**
+     * Ensure cleanup occurs during GC, if necessary.
+     */
+    public void finalize() {
+        if (!_closed) close();
     }
 
     //-------------------------------------------[ org.xml.sax.EntityResolver ]
@@ -95,6 +133,7 @@ public class LocatorEntityResolver implements EntityResolver {
                 _lastResolvedSchemaURL = systemId;
             }
             _resolvedURIs.add(systemId);
+            _inputStreams.add(in);
             return new InputSource(in);
         }
 
@@ -110,7 +149,9 @@ public class LocatorEntityResolver implements EntityResolver {
         // TODO: Implement DTD whitelisting???
 
         _LOG.info("Resolving DTD: " + uri);
-        InputSource inputSource = new InputSource(_locator.get(uri, true));
+        InputStream in = _locator.get(uri, true);
+        _inputStreams.add(in);
+        InputSource inputSource = new InputSource(in);
         _resolvedURIs.add(uri);
         return inputSource;
 

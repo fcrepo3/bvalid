@@ -105,6 +105,7 @@ public class XercesXSDValidator implements Validator {
             throw new ValidationException("Validation failed due to underlying error", th);
         } finally {
             try { xmlStream.close(); } catch (Exception e) { }
+            entityResolver.close();
         }
 
         List errors = errorHandler.getErrorList();
