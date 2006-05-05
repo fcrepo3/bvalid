@@ -141,8 +141,6 @@ public class DiskSchemaCatalog implements SchemaCatalog {
         if (!deleted) {
             if (file.exists()) {
                 _LOG.warn("Cannot remove schema file: " + file.getPath());
-            } else {
-                _LOG.warn("Schema file already deleted: " + file.getPath());
             }
         }
     }

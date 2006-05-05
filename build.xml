@@ -111,7 +111,7 @@
   </target>
 
   <target name="test" description="Run tests" depends="testclasses">
-    <junit printsummary="yes" haltonfailure="yes" showoutput="true">
+    <junit printsummary="no" haltonfailure="yes" showoutput="true" filtertrace="true">
       <formatter type="plain" usefile="false"/>
       <classpath refid="test.path"/>
       <sysproperty key="propname" value="propvalue"/>
@@ -128,6 +128,19 @@
       <sysproperty key="org.apache.commons.logging.Log"
                    value="org.apache.commons.logging.impl.Log4JLogger"/>
       <sysproperty key="log4j.ignoreTCL" value="true"/>
+    </java>
+  </target>
+
+  <target name="otest" description="Run tests interactively" depends="testclasses">
+    <java classname="net.sf.bvalid.BValidPackageTestSuite"
+          fork="yes">
+      <classpath refid="test.path"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                   value="org.apache.commons.logging.impl.Log4jFactory"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                   value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <sysproperty key="log4j.ignoreTCL" value="true"/>
+      <sysproperty key="text" value="true"/>
     </java>
   </target>
 

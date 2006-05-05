@@ -24,6 +24,10 @@ public class BValidPackageTestSuite {
     }
 
     public static void main(String[] args) {
-        TestRunner.run(BValidPackageTestSuite.class);
+        if (System.getProperty("text") != null && System.getProperty("text").equals("true")) {
+            junit.textui.TestRunner.run(BValidPackageTestSuite.suite());
+        } else {
+            TestRunner.run(BValidPackageTestSuite.class);
+        }
     }
 }
