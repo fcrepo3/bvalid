@@ -11,6 +11,8 @@ public class CatalogPackageTestSuite {
         TestSuite suite = new TestSuite(CatalogPackageTestSuite.class.getName());
 
         suite.addTestSuite(FileSchemaIndexTest.class);
+        suite.addTestSuite(MemorySchemaCatalogTest.class);
+        suite.addTestSuite(DiskSchemaCatalogTest.class);
 
         return suite;
     }

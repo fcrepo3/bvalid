@@ -16,6 +16,9 @@ public interface SchemaCatalog {
 
     public Iterator listURIs() throws ValidatorException;
 
+    /**
+     * Get the schema InputStream if in the catalog, else return null.
+     */
     public InputStream get(String uri) throws ValidatorException;
 
     public void put(String uri, InputStream in) throws ValidatorException;
