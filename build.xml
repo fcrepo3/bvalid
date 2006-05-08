@@ -6,19 +6,20 @@
   <!-- defines bvalid.version -->
   <loadproperties srcFile="src/java/net/sf/bvalid/BValid.properties"/>
 
-  <path id="base.path">
+  <path id="compile.path">
     <pathelement location="${lib.xml-apis}"/>
     <pathelement location="${lib.xerces}"/>
     <pathelement location="${lib.log4j}"/>
     <pathelement location="${lib.httpclient}"/>
     <pathelement location="${lib.logging}"/>
   </path>
-  <path id="compile.path">
-    <path refid="base.path"/>
-    <pathelement location="${lib.junit}"/>
-  </path>
   <path id="test.path">
     <path refid="compile.path"/>
+    <pathelement location="${lib.junit}"/>
+    <pathelement location="${lib.jetty}"/>
+    <pathelement location="${lib.servlet}"/>
+    <pathelement location="${lib.jasper-runtime}"/>
+    <pathelement location="${lib.jasper-compiler}"/>
     <pathelement location="build/classes"/>
     <pathelement location="build/testclasses"/>
     <pathelement location="src/config"/>
@@ -56,7 +57,13 @@
   <target name="dist" depends="classes" description="Build the distribution in dist/">
     <mkdir dir="dist/lib"/>
     <copy todir="dist/lib">
-      <fileset dir="lib"/>
+      <fileset dir="lib">
+        <exclude name="junit.jar"/>
+        <exclude name="org.mortbay.jetty.jar"/>
+        <exclude name="javax.servlet.jar"/>
+        <exclude name="jasper-runtime.jar"/>
+        <exclude name="jasper-compiler.jar"/>
+      </fileset>
     </copy>
     <copy todir="dist">
       <fileset dir="src/bin"/>
@@ -120,8 +127,7 @@
   </target>
 
   <target name="itest" description="Run tests interactively" depends="testclasses">
-    <java classname="net.sf.bvalid.BValidPackageTestSuite"
-          fork="yes">
+    <java classname="net.sf.bvalid.BValidPackageTestSuite" fork="yes">
       <classpath refid="test.path"/>
       <sysproperty key="org.apache.commons.logging.LogFactory"
                    value="org.apache.commons.logging.impl.Log4jFactory"/>
@@ -131,16 +137,13 @@
     </java>
   </target>
 
-  <target name="otest" description="Run tests interactively" depends="testclasses">
-    <java classname="net.sf.bvalid.BValidPackageTestSuite"
-          fork="yes">
+  <target name="jtest" depends="testclasses">
+    <java classname="net.sf.bvalid.util.JettyRunner" fork="yes">
       <classpath refid="test.path"/>
-      <sysproperty key="org.apache.commons.logging.LogFactory"
-                   value="org.apache.commons.logging.impl.Log4jFactory"/>
-      <sysproperty key="org.apache.commons.logging.Log"
-                   value="org.apache.commons.logging.impl.Log4JLogger"/>
-      <sysproperty key="log4j.ignoreTCL" value="true"/>
-      <sysproperty key="text" value="true"/>
+      <arg value="7357"/>
+      <arg value="/"/>
+      <arg value="."/>
+      <arg value="fork"/>
     </java>
   </target>
 
