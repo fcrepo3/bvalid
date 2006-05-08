@@ -121,7 +121,7 @@
     <junit printsummary="no" haltonfailure="yes" showoutput="true" filtertrace="true">
       <formatter type="plain" usefile="false"/>
       <classpath refid="test.path"/>
-      <sysproperty key="propname" value="propvalue"/>
+      <sysproperty key="jetty.fork" value="false"/>
       <test name="net.sf.bvalid.BValidPackageTestSuite"/>
     </junit>
   </target>

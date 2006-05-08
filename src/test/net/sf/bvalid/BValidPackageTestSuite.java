@@ -22,7 +22,12 @@ public class BValidPackageTestSuite extends TestCase {
         // sub-packages
         suite.addTest(CatalogPackageTestSuite.suite());
 
-        return new JettyTestSetup(suite, 7357, "/", ".", true);
+        boolean fork = true;
+        String forkValue = System.getProperty("jetty.fork");
+        if (forkValue != null) {
+            fork = !(forkValue.equalsIgnoreCase("false") || forkValue.equalsIgnoreCase("no"));
+        }
+        return new JettyTestSetup(suite, 7357, "/", ".", fork);
     }
 
     public static void main(String[] args) throws Exception {
