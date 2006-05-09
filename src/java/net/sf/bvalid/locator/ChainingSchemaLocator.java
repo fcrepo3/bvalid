@@ -29,6 +29,7 @@ public class ChainingSchemaLocator implements SchemaLocator {
         while (i < (_locators.size() - 1)) {
             InputStream in = ((SchemaLocator) _locators.get(i)).get(uri, false);
             if (in != null) return in;
+            i++;
         }
 
         return ((SchemaLocator) _locators.get(i)).get(uri, required);
