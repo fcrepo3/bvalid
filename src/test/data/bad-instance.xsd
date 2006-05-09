@@ -1,0 +1,4 @@
+<sample xmlns="http://example.org/sample/">
+  <sample-element>value</sample-element>
+  <bad-element>value</bad-element>
+</sample>

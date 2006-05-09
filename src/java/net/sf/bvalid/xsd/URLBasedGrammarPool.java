@@ -12,7 +12,7 @@ import org.apache.xerces.xni.grammars.XMLGrammarPool;
  * An implementation of <code>XMLGrammarPool</code>, keyed by source URL.
  *
  * Keying by location, rather than root element name or target namespace,
- * is necessary in order to support multiple (possibly conflict!) grammar 
+ * is necessary in order to support multiple (possibly conflicting!) grammar 
  * definitions for the same namespace.
  *
  * @author cwilper@cs.cornell.edu

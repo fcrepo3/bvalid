@@ -6,8 +6,13 @@ import org.apache.log4j.Logger;
 
 public abstract class TestConfig {
 
-    public final static String EXISTING_SCHEMA = "existing-schema.xsd";
-    public final static String MISSING_SCHEMA = "missing-schema.xsd";
+    public final static String EXISTING_SCHEMA = "existing-schema.xyz";
+    public final static String MISSING_SCHEMA = "missing-schema.xyz";
+
+    public final static String BAD_INSTANCE_XSD = "bad-instance.xsd";
+    public final static String BAD_SCHEMA_XSD = "bad-schema.xsd";
+    public final static String GOOD_INSTANCE_XSD = "good-instance.xsd";
+    public final static String GOOD_SCHEMA_XSD = "good-schema.xsd";
 
     // jetty.fork
     public static boolean JETTY_FORK = true;

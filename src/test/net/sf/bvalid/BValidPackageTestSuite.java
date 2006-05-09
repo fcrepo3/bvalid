@@ -8,6 +8,7 @@ import junit.swingui.TestRunner;
 import net.sf.bvalid.catalog.CatalogPackageTestSuite;
 import net.sf.bvalid.locator.LocatorPackageTestSuite;
 import net.sf.bvalid.util.JettyTestSetup;
+import net.sf.bvalid.xsd.XSDPackageTestSuite;
 
 public class BValidPackageTestSuite extends TestCase {
 
@@ -23,6 +24,7 @@ public class BValidPackageTestSuite extends TestCase {
         // sub-package suites
         suite.addTest(CatalogPackageTestSuite.suite());
         suite.addTest(LocatorPackageTestSuite.suite());
+        suite.addTest(XSDPackageTestSuite.suite());
 
         return new JettyTestSetup(suite, 
                                   TestConfig.TEST_PORT,
