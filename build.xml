@@ -137,16 +137,6 @@
     </java>
   </target>
 
-  <target name="jtest" depends="testclasses">
-    <java classname="net.sf.bvalid.util.JettyRunner" fork="yes">
-      <classpath refid="test.path"/>
-      <arg value="7357"/>
-      <arg value="/"/>
-      <arg value="."/>
-      <arg value="fork"/>
-    </java>
-  </target>
-
   <target name="prep"
           description="prepare for a build">
     <mkdir dir="build"/>
