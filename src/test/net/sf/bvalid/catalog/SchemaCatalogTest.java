@@ -18,24 +18,27 @@ public abstract class SchemaCatalogTest extends TestCase {
 
         InputStream in = new ByteArrayInputStream(_CONTENT.getBytes());
 
-        getCatalog().put(_URI, in);
+        SchemaCatalog catalog = getCatalog();
+        String testClass = catalog.getClass().getName();
+
+        catalog.put(_URI, in);
 
         int i = 0;
         String uri = "undefined";
-        Iterator iter = getCatalog().listURIs();
+        Iterator iter = catalog.listURIs();
         while (iter.hasNext()) {
-            assertEquals("Catalog should only contain one URI at this point",
+            assertEquals(testClass + " should only contain one URI at this point",
                          i,
                          0);
             uri = (String) iter.next();
             i++;
         }
-        assertEquals("Catalog contains wrong URI",
+        assertEquals(testClass + " contains wrong URI",
                      uri,
                      _URI);
 
-        assertEquals("Catalog.contains should have returned true after put",
-                     getCatalog().contains(_URI),
+        assertEquals(testClass + ".contains should have returned true after put",
+                     catalog.contains(_URI),
                      true);
 
     }
@@ -43,9 +46,13 @@ public abstract class SchemaCatalogTest extends TestCase {
     public void testGet() throws Exception {
 
         InputStream in = new ByteArrayInputStream(_CONTENT.getBytes());
-        getCatalog().put(_URI, in);
 
-        InputStream gotIn = getCatalog().get(_URI);
+        SchemaCatalog catalog = getCatalog();
+        String testClass = catalog.getClass().getName();
+
+        catalog.put(_URI, in);
+
+        InputStream gotIn = catalog.get(_URI);
 
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(gotIn));
@@ -60,7 +67,7 @@ public abstract class SchemaCatalogTest extends TestCase {
             if (_CONTENT.endsWith("\n")) {
                 buf.append(_CONTENT);
             }
-            assertEquals("Got different schema content than what was put",
+            assertEquals(testClass + " gave different schema content than what was put",
                          buf.toString(),
                          _CONTENT);
         } finally {
@@ -72,17 +79,21 @@ public abstract class SchemaCatalogTest extends TestCase {
     public void testRemove() throws Exception {
 
         InputStream in = new ByteArrayInputStream(_CONTENT.getBytes());
-        getCatalog().put(_URI, in);
 
-        getCatalog().remove(_URI);
+        SchemaCatalog catalog = getCatalog();
+        String testClass = catalog.getClass().getName();
 
-        Iterator iter = getCatalog().listURIs();
-        assertEquals("Catalog should be empty after remove",
+        catalog.put(_URI, in);
+
+        catalog.remove(_URI);
+
+        Iterator iter = catalog.listURIs();
+        assertEquals(testClass + " should be empty after remove",
                      iter.hasNext(),
                      false);
 
-        in = getCatalog().get(_URI);
-        assertNull("Catalog.get should have returned null after removal",
+        in = catalog.get(_URI);
+        assertNull(testClass + ".get should have returned null after removal",
                    in);
 
     }

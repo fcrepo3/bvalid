@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 import junit.swingui.TestRunner;
 
 import net.sf.bvalid.catalog.CatalogPackageTestSuite;
+import net.sf.bvalid.locator.LocatorPackageTestSuite;
 import net.sf.bvalid.util.JettyTestSetup;
 
 public class BValidPackageTestSuite extends TestCase {
@@ -19,15 +20,15 @@ public class BValidPackageTestSuite extends TestCase {
         suite.addTestSuite(ValidatorFactoryTest.class);
         suite.addTestSuite(ValidatorOptionTest.class);
 
-        // sub-packages
+        // sub-package suites
         suite.addTest(CatalogPackageTestSuite.suite());
+        suite.addTest(LocatorPackageTestSuite.suite());
 
-        boolean fork = true;
-        String forkValue = System.getProperty("jetty.fork");
-        if (forkValue != null) {
-            fork = !(forkValue.equalsIgnoreCase("false") || forkValue.equalsIgnoreCase("no"));
-        }
-        return new JettyTestSetup(suite, 7357, "/", ".", fork);
+        return new JettyTestSetup(suite, 
+                                  TestConfig.TEST_PORT,
+                                  "/", 
+                                  TestConfig.TEST_DATADIR,
+                                  TestConfig.JETTY_FORK);
     }
 
     public static void main(String[] args) throws Exception {
