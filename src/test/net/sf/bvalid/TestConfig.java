@@ -14,6 +14,8 @@ public abstract class TestConfig {
     public final static String GOOD_INSTANCE_XSD = "good-instance.xsd";
     public final static String GOOD_SCHEMA_XSD = "good-schema.xsd";
 
+    public final static String GOOD_DTD = "good.dtd";
+
     // jetty.fork
     public static boolean JETTY_FORK = true;
 

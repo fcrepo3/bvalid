@@ -10,7 +10,10 @@ public class XSDPackageTestSuite {
 
         TestSuite suite = new TestSuite(XSDPackageTestSuite.class.getName());
 
+        suite.addTestSuite(LocatorEntityResolverTest.class);
+        suite.addTestSuite(URLBasedGrammarPoolTest.class);
         suite.addTestSuite(XercesXSDValidatorTest.class);
+        suite.addTestSuite(XSDErrorHandlerTest.class);
 
         return suite;
     }

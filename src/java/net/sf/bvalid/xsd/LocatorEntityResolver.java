@@ -53,7 +53,7 @@ public class LocatorEntityResolver implements EntityResolver {
     /**
      * Clean up.
      *
-     * This ensures that the underlying InputStreams of DataSources we have
+     * This ensures that the underlying InputStreams of InputSources we have
      * returned are closed.  This is important because Xerces doesn't take
      * care of this for us.
      */
@@ -61,7 +61,7 @@ public class LocatorEntityResolver implements EntityResolver {
 
         if (!_closed) {
             _LOG.debug("Closing " + _inputStreams.size() 
-                    + " returned DataSources' underlying InputStreams");
+                    + " returned InputSources' underlying InputStreams");
             Iterator iter = _inputStreams.iterator();
             _closed = true;
             while (iter.hasNext()) {
@@ -149,7 +149,7 @@ public class LocatorEntityResolver implements EntityResolver {
         // TODO: Implement DTD whitelisting???
 
         _LOG.info("Resolving DTD: " + uri);
-        InputStream in = _locator.get(uri, true);
+        InputStream in = _locator.get(uri, _mustResolveAll);
         _inputStreams.add(in);
         InputSource inputSource = new InputSource(in);
         _resolvedURIs.add(uri);
