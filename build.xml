@@ -79,6 +79,11 @@
         <exclude name="dist/**"/>
       </fileset>
     </copy>
+    <replace file="dist/release/bvalid-${bvalid.version}-src/README.txt"
+             value="value not found in version.properties"
+             propertyFile="src/java/net/sf/bvalid/BValid.properties">
+      <replacefilter token="@bvalid.version@" property="bvalid.version"/>
+    </replace>
     <zip zipfile="dist/release/bvalid-${bvalid.version}-src.zip" basedir="dist/release" includes="bvalid-${bvalid.version}-src/**"/>
     <delete dir="dist/release/bvalid-${bvalid.version}-src"/>
   </target>
@@ -107,6 +112,11 @@
     <copy todir="dist/doc">
       <fileset dir="src/doc"/>
     </copy>
+    <replace file="dist/doc/index.html"
+             value="value not found in version.properties"
+             propertyFile="src/java/net/sf/bvalid/BValid.properties">
+      <replacefilter token="@bvalid.version@" property="bvalid.version"/>
+    </replace>
     <javadoc packagenames="net.sf.bvalid, net.sf.bvalid.locator, net.sf.bvalid.catalog, net.sf.bvalid.util"
              classpathref="compile.path"
              sourcepath="src/java"
