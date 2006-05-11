@@ -19,10 +19,6 @@
     <priority value="INFO" />
   </category>
   
-  <category name="net.sf.bvalid.TestConfig">
-    <priority value="INFO" />
-  </category>
-  
   <root>
     <priority value="WARN" />
     <appender-ref ref="STDOUT"/>

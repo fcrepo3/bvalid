@@ -17,7 +17,7 @@ body {
     margin-bottom: 10px;
     min-height: 70px;
     width: 100%;
-    background: khaki;
+    background: #EEEEFF;
     color: black;
 }
 
@@ -96,10 +96,8 @@ body {
 }
 
 h2, h3 {
-/*    color: #4C7C8E; */
     color: darkblue;
     margin-top: 36px;
-/*    margin-top: 4px; */
     margin-bottom: 4px;
     border-bottom: dashed 1px #000000;
 }
@@ -144,15 +142,14 @@ p {
 }
 
 .code {
-    background: khaki;
- /*   background: #ddddff; */
+    background: #EEEEFF;
     border: thin solid #000000;
     font-family: Lucida Console, Courier New, Courier, monospace;
     margin: 5px 5px 5px 5px;
     min-width: 600px;
     padding: 5px;
     white-space: pre;
-    font-size: 12pt;
+    font-size: 10pt;
 }
 
 .reference {
