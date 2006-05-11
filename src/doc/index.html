@@ -9,34 +9,31 @@
 </head>
 
 <body>
-<div id="header">
-    <div id="title">
-        <h1>BValid XML Validation API<br/>
-        Version @bvalid.version@</h1>
-    </div>
-</div>
 
 <div class="toc">
-    <h2>Contents</h2>
+    <h1>
+      <img src="checkmark.png"/>
+      BValid @bvalid.version@
+    </h1>
     <div class="tocbox">
         
     <ol>
-		<li><a href="#intro">Introduction</a></li>
-		<li><a href="#license">License</a></li>
-		<li><a href="#inst">Downloading and Installing</a></li>
+		<li><a href="#intro">What is BValid?</a></li>
+		<li><a href="#inst">How to Download</a></li>
 		<li><a href="#api">API Documentation</a></li>
 		<li><a href="#cmdline">Command-Line Utility</a></li>
-		<li><a href="#issues">Known Issues</a></li>
+		<li><a href="#issues">Known Issues / Bugs</a></li>
+		<li><a href="#license">License Information</a></li>
     </ol>
     </div>
 </div>
 
 <div class="sec2">
-  <h2><a name="intro">1. Introduction</a></h2>
+  <h2><a name="intro">1. What is BValid?</a></h2>
   <p>
-    BValid is a Java API designed for high-performance validation of XML documents.
-    It defines and implements several interfaces to make validation flexible
-    and consistent across schema languages.
+    BValid is a Java API designed for fast, easy-to-use validation of XML documents.
+    It defines and implements a couple high-level Java interfaces to make 
+    the validation process simple, yet flexible.
   </p>
   <p>
     Distinguishing features:
@@ -48,23 +45,9 @@
   </p>
 </div>
 
-<div class="sec2">
-  <h2><a name="license">2. License</a></h2>
-  <p>
-BValid is distributed under the Educational Community License (ECL), v1.0.  
-</p>
-<p>
-The distribution also includes several third-party, open-source libraries, each with
-it's own license terms.
-</p>
-<p>
-See the <a href="license/index.html">License Page</a> for specific terms of the
-all relevant licenses.
-  </p>
-</div>
 
 <div class="sec2">
-  <h2><a name="inst">3. Downloading and Installing</a></h2>
+  <h2><a name="inst">2. How to Download</a></h2>
   <p>
     The latest distribution (source and binary) can be downloaded from
     <a href="http://www.sf.net/projects/bvalid">http://www.sf.net/projects/bvalid</a>
@@ -74,21 +57,13 @@ all relevant licenses.
     <code>bvalid</code> <a href="#cmdline">command-line utility</a> right away.
   </p>
   <p>
-    To begin using bvalid in your own projects, you'll need the 
-    following jars (included) in your CLASSPATH:
-    <ul>
-      <li> <b>bvalid.jar</b> - the BValid API</li>
-      <li> lib/<b>commons-httpclient-2.0.1.jar</b> - for resolving schemas via http</li>
-      <li> lib/<b>commons-logging.jar</b> - for logging (required by commons-httpclient)</li>
-      <li> lib/<b>log4j-1.2.8.jar</b> - for logging</li>
-      <li> lib/<b>xercesImpl.jar</b> - for XML parsing and XSD validation</li>
-      <li> lib/<b>xml-apis.jar</b> - for XML parsing</li>
-    </ul>
+    To begin using bvalid in your own projects, you'll need the required
+    jars (included in the lib/ directory) in your CLASSPATH.
   </p>
 </div>
 
 <div class="sec2">
-  <h2><a name="api">4. API Documentation</a></h2>
+  <h2><a name="api">3. API Documentation</a></h2>
   <p>
     The main interface you work with is the <a href="api/net/sf/bvalid/Validator.html">Validator</a>.  Once you have obtained an instance from the <a href="api/net/sf/bvalid/ValidatorFactory.html">ValidatorFactory</a>, you can use it to validate any number of XML documents from any number of concurrent threads.  
     </p>
@@ -185,7 +160,7 @@ try {
 </div>
 
 <div class="sec2">
-  <h2><a name="cmdline">5. Command-Line Utility</a></h2>
+  <h2><a name="cmdline">4. Command-Line Utility</a></h2>
   <p>
     The <code>bvalid</code> command-line utility is a simple application of the API that
     can be used to validate a single XML document at a time.
@@ -225,7 +200,7 @@ Options:
 </div>
 
 <div class="sec2">
-  <h2><a name="issues">6. Known Issues</a></h2>
+  <h2><a name="issues">5. Known Issues / Bugs</a></h2>
   <ul>
   <li>
     The present version only performs <a href="http://www.w3.org/XML/Schema">W3C Schema</a> validation.  Future
@@ -236,6 +211,21 @@ Options:
     <li> Should the API include more direct support for schema whitelisting?  
          Currently this is possible by writing your own SchemaLocator.</li>
   </ul>
+</div>
+
+<div class="sec2">
+  <h2><a name="license">6. License Information</a></h2>
+  <p>
+BValid is distributed under the Educational Community License (ECL), v1.0.  
+</p>
+<p>
+The distribution also includes several third-party, open-source libraries, each with
+it's own license terms.
+</p>
+<p>
+See the <a href="license/index.html">License Information Page</a> for specific terms of
+all relevant licenses.
+  </p>
 </div>
 
 <div id="footer">

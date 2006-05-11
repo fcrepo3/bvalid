@@ -1,11 +1,10 @@
 
                         BValid XML Validation API
+                              Version @bvalid.version@
 
                            Source Distribution
 
-                              Version @bvalid.version@
-
-                          http://bvalid.sf.net/
+                         Written by Chris Wilper
 
                   Copyright (c) 2006, Cornell University
 
