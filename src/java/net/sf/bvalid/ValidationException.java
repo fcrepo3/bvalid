@@ -3,6 +3,9 @@ package net.sf.bvalid;
 /**
  * Signals that validation failed.
  *
+ * If there were multiple error messages, they'll be separated
+ * by newlines in the message.
+ *
  * @author cwilper@cs.cornell.edu
  */
 public class ValidationException extends ValidatorException {
