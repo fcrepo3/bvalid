@@ -4,8 +4,6 @@
 
                            Source Distribution
 
-                         Written by Chris Wilper
-
                   Copyright (c) 2006, Cornell University
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
