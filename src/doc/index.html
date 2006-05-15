@@ -19,7 +19,7 @@
         
     <ol>
 		<li><a href="#intro">What is BValid?</a></li>
-		<li><a href="#inst">How to Download</a></li>
+		<li><a href="#inst">Downloading and Installing</a></li>
 		<li><a href="#api">API Documentation</a></li>
 		<li><a href="#cmdline">Command-Line Utility</a></li>
 		<li><a href="#issues">Known Issues / Bugs</a></li>
@@ -47,7 +47,7 @@
 
 
 <div class="sec2">
-  <h2><a name="inst">2. How to Download</a></h2>
+  <h2><a name="inst">2. Downloading and Installing</a></h2>
   <p>
     The latest distribution (source and binary) can be downloaded from
     <a href="http://www.sf.net/projects/bvalid">http://www.sf.net/projects/bvalid</a>
@@ -59,6 +59,10 @@
   <p>
     To begin using bvalid in your own projects, you'll need the required
     jars (included in the lib/ directory) in your CLASSPATH.
+  </p>
+  <p>
+    Note: The binary distribution is compiled for Java 1.4.
+    Currently, BValid will compile and run with Java 1.4 and Java 1.5.
   </p>
 </div>
 
@@ -207,7 +211,11 @@ Options:
     versions will also support <a href="http://www.schematron.com/">Schematron</a> 
     and <a href="http://www.relaxng.org/">Relax NG</a> validation.
   </li>
-    <li> <code>ValidationException</code> isn't clear about how multiple validation errors are reported.</li>
+    <li> <code>ValidationException</code> currently only reports multiple errors as a multi-line string.  An alternate method (getErrorList?) would be nice.</li>
+    <li> Javadocs are incomplete (params, returns, throws, and some fields).</li>
+    <li> Some unit tests still need to be written.  In particular, multithreaded
+         validation tests and whitebox tests for SchemaCatalog and SchemaLocator
+         implementations.</li>
     <li> Should the API include more direct support for schema whitelisting?  
          Currently this is possible by writing your own SchemaLocator.</li>
   </ul>
