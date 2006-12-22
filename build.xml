@@ -32,6 +32,8 @@
     <javac srcdir="src/java" destdir="build/classes" 
            includes="**" 
            classpathref="compile.path"
+           source="${source}"
+           target="${target}"
            optimize="${optimize}" debug="${debug}"/>
     <copy file="src/java/net/sf/bvalid/BValid.properties" tofile="build/classes/net/sf/bvalid/BValid.properties"/>
     <propertyfile file="build/version.properties">
@@ -70,7 +72,7 @@
       <fileset dir="src/config"/>
     </copy>
     <chmod dir="dist" perm="ugo+x" includes="bvalid"/>
-    <jar jarfile="dist/bvalid.jar" basedir="build/classes"/>
+    <jar jarfile="dist/bvalid-${bvalid.version}.jar" basedir="build/classes"/>
   </target>
 
   <target name="srcrelease" depends="clean">
