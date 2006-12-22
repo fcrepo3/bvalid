@@ -6,6 +6,7 @@ import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -71,14 +72,14 @@ public class WebClient {
             }
         }
 
-		_cManager.setMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
-		_cManager.setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+		_cManager.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
+		_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+		_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
+		_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
 		HttpClient client = new HttpClient(_cManager);
-		client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
-		client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
         if (host != null && creds != null) {
-            client.getState().setCredentials(null, host, creds);
-		    client.getState().setAuthenticationPreemptive(true);
+            client.getState().setCredentials(new AuthScope(host, AuthScope.ANY_PORT), creds);
+            client.getParams().setAuthenticationPreemptive(true);
         }
 		return client;
 	}

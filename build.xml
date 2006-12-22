@@ -11,6 +11,7 @@
     <pathelement location="${lib.xerces}"/>
     <pathelement location="${lib.log4j}"/>
     <pathelement location="${lib.httpclient}"/>
+    <pathelement location="${lib.codec}"/>
     <pathelement location="${lib.logging}"/>
   </path>
   <path id="test.path">
@@ -34,7 +35,9 @@
            classpathref="compile.path"
            source="${source}"
            target="${target}"
-           optimize="${optimize}" debug="${debug}"/>
+           optimize="${optimize}" debug="${debug}">
+        <compilerarg line="-Xlint:deprecation"/>
+    </javac>
     <copy file="src/java/net/sf/bvalid/BValid.properties" tofile="build/classes/net/sf/bvalid/BValid.properties"/>
     <propertyfile file="build/version.properties">
       <entry key="buildDate" type="date" value="now"/>
